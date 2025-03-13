@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vahanar_front/widgets/custom_button.dart';
 import 'package:vahanar_front/constants.dart';
-
 class GreetingScreen extends StatelessWidget {
   const GreetingScreen({super.key});
 

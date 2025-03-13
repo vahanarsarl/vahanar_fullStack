@@ -9,7 +9,7 @@ import 'screens/auth/sign_in_screen.dart';
 import 'screens/auth/forgot_password/forgot_password.dart';
 import 'screens/auth/forgot_password/pass_email.dart';
 import 'screens/auth/sign_up/finish_sign_up_screen.dart';
-
+import 'screens/home/home_screen.dart';
 void main() {
   runApp(MyApp());
 }
@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/forgot_password': (context) => ForgotPasswordScreen(),
         '/forgot_password/pass_email': (context) => EmailSentScreen(),
         '/sign_up/finish': (context) => FinishSignUpScreen(),
+        '/home': (context) => HomeScreen(),
       },
     );
   }
