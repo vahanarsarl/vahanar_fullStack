@@ -3,17 +3,19 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // or your database provider
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL=postgres://postgres:vahanar@localhost:5432/vahanar")
 }
 
 model User {
   id            Int      @id @default(autoincrement())
-  name          String?
+  fullName      String   @map("full_name")
+  phone         String   @unique
   email         String   @unique
   password      String
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  isVerified    Boolean  @default(false) @map("is_verified")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
 }
