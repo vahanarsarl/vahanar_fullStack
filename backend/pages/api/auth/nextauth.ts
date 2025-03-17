@@ -1,35 +1,36 @@
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
-import { Pool } from 'pg';
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const prisma = new PrismaClient();
 
 export default NextAuth({
+  adapter: PrismaAdapter(prisma),
   providers: [
     Providers.Credentials({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const { rows } = await pool.query(
-          'SELECT * FROM users WHERE email = $1 AND password = $2',
-          [credentials.email, credentials.password]
-        );
-        if (rows.length > 0) {
-          return { id: rows[0].id, email: rows[0].email };
-        } else {
-          return null;
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (user && bcrypt.compareSync(credentials.password, user.password)) {
+          return { id: user.id, email: user.email };
         }
-      }
-    })
+        return null;
+      },
+    }),
   ],
   session: {
     jwt: true,
   },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt(token, user) {
       if (user) {
@@ -40,6 +41,6 @@ export default NextAuth({
     async session(session, token) {
       session.userId = token.id;
       return session;
-    }
-  }
+    },
+  },
 });
