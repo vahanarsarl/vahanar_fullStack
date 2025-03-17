@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "postgres",
-    "password": "Vahanar@123",
-    "database": "vahanar_db",
+    "password": "Vahanar123",
+    "database": "vahanar",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }
