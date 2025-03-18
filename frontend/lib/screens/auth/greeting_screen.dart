@@ -76,7 +76,7 @@ class GreetingScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.pushNamed(context, '/sign_up/step1');
                           },
-                          color: AppConstants.primaryColor,
+                          color: AppConstants.primaryColor, isLoading: null,
                         ),
                         const SizedBox(height: 10.0),
                         CustomButton(
@@ -84,7 +84,7 @@ class GreetingScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.pushNamed(context, '/sign_in'); // Redirection vers l'écran de connexion
                           },
-                          color: Colors.black,
+                          color: Colors.black, isLoading: null,
                         ),
                         const SizedBox(height: 10.0),
                         OutlinedButton(

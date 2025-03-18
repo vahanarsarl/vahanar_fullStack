@@ -18,7 +18,7 @@ class CustomButton extends StatelessWidget {
     this.width = double.infinity,
     this.height = 50.0,
     this.borderRadius,
-    this.textStyle,
+    this.textStyle, required isLoading,
   });
 
   @override

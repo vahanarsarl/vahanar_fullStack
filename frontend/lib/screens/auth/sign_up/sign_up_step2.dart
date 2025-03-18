@@ -109,7 +109,7 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
               },
               color: AppConstants.primaryColor,
               width: double.infinity,
-              height: 50,
+              height: 50, isLoading: null,
             ),
             const SizedBox(height: 20),
           ],

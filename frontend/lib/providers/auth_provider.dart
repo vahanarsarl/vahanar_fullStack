@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:vahanar/services/auth_service.dart';
+import 'package:vahanar_front/services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();

@@ -5,7 +5,7 @@ class BottomNavBar extends StatefulWidget {
   _BottomNavBarState createState() => _BottomNavBarState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderStateMixin {
+class _BottomNavBarState extends State<BottomNavBar> {
   int _selectedIndex = 1;
 
   void _onItemTapped(int index) {
@@ -36,7 +36,7 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
         items: [
           _buildNavItem('search', 'Search', 0),
           _buildNavItem('home', 'Home', 1),
-          _buildNavItem('profile', 'Profile', 2),
+          _buildNavItem('person', 'Profile', 2),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -56,40 +56,38 @@ class _BottomNavBarState extends State<BottomNavBar> with SingleTickerProviderSt
     bool isSelected = _selectedIndex == index;
 
     return BottomNavigationBarItem(
-      icon: Stack(
-        clipBehavior: Clip.none,
+      icon: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          if (isSelected)
-            Positioned(
-              top: -20,
-              left: 0,
-              right: 0,
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Color(0xFF004852), // Couleur du bouton actif
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF004852).withOpacity(0.5),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                    ),
-                  ],
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              if (isSelected)
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Color(0xFF004852), // Couleur du bouton actif
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFF004852).withOpacity(0.5),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
                 ),
+              Image.asset(
+                isSelected
+                    ? 'assets/icons/${iconName}_b.png' // Icône blanche si actif
+                    : 'assets/icons/${iconName}.png', // Icône normale sinon
+                width: 30,
+                height: 30,
               ),
-            ),
-          Padding(
-            padding: EdgeInsets.only(top: isSelected ? -10 : 0),
-            child: Image.asset(
-              isSelected
-                  ? 'assets/icons/${iconName}_white.png' // Icône blanche si sélectionné
-                  : 'assets/icons/${iconName}.png', // Icône normale sinon
-              width: 30,
-              height: 30,
-            ),
+            ],
           ),
+          SizedBox(height: 4), // Ajout d'un espace pour éviter les chevauchements
         ],
       ),
       label: label,
