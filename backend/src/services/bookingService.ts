@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db/prisma';
+import { prisma } from '../lib/db/prisma';
 import { ProductService } from './productService';
 
 export class BookingService {

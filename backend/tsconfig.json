@@ -1,7 +1,7 @@
 {
   "name": "vahanar-backend",
   "compilerOptions": {
-    // Removed invalid 'version' property
+    "esModuleInterop": true
   },
   "private": true,
   "scripts": {

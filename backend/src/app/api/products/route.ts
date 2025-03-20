@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { ProductService } from '@/services/productService';
-import { createProductSchema } from '@/lib/utils/validators';
+import { ProductService } from '../../../services/productService';
+import { createProductSchema } from '../../../lib/utils/validators';
 
 export async function GET(request: NextRequest) {
   try {

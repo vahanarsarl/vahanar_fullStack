@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/db/prisma';
+import { prisma } from '../lib/db/prisma';
 import bcrypt from 'bcryptjs';
-import { signJWT } from '@/lib/auth/jwt';
+import { signJWT } from '../lib/auth/jwt';
 
 export class AuthService {
   static async register(data: {

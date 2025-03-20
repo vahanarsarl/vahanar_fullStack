@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { UserService } from '@/services/userService';
-import { updateUserSchema } from '@/lib/utils/validators';
+import { UserService } from '../../../../services/userService';
+import { updateUserSchema } from '../../../../lib/utils/validators';
 
 export async function GET(request: NextRequest) {
   try {

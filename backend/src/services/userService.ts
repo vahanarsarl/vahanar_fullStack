@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db/prisma';
+import { prisma } from '../lib/db/prisma';
 
 export class UserService {
   static async getById(userId: string) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthService } from '@/services/authService';
-import { loginUserSchema } from '@/lib/utils/validators';
+import { AuthService } from '../../../../services/authService';
+import { loginUserSchema } from '../../../../lib/utils/validators';
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,13 @@ export async function POST(request: NextRequest) {
     }
     
     // Login user
-    const { user, token } = await AuthService.login(result.data);
+    if (!result.data.email || !result.data.password) {
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      );
+    }
+    const { user, token } = await AuthService.login(result.data as { email: string; password: string });
     
     return NextResponse.json({ user, token });
   } catch (error: any) {
