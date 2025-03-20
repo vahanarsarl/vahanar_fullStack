@@ -1,6 +1,8 @@
 {
   "name": "vahanar-backend",
-  "version": "0.1.0",
+  "compilerOptions": {
+    // Removed invalid 'version' property
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",
