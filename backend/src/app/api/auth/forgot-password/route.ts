@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthService } from '@/services/authService';
+import { AuthService } from '../../../../services/authService';
 import { z } from 'zod';
 
 const forgotPasswordSchema = z.object({
