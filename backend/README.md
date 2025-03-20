@@ -1,70 +1,46 @@
-# vahanar_fullStack
 backend/
-│── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── auth/
+├── .env                    # Environment variables
+├── .env.example            # Example environment variables
+├── .gitignore              # Git ignore file
+├── package.json            # Node.js dependencies
+├── tsconfig.json           # TypeScript configuration
+├── next.config.js          # Next.js configuration
+├── middleware.ts           # Global middleware
+├── public/                 # Static files
+├── src/
+│   ├── app/                # App router
+│   │   ├── api/            # API routes
+│   │   │   ├── auth/       # Authentication endpoints
 │   │   │   │   ├── login/
 │   │   │   │   │   └── route.ts
 │   │   │   │   ├── register/
 │   │   │   │   │   └── route.ts
-│   │   │   │   ├── verify-phone/
+│   │   │   │   ├── verify/
 │   │   │   │   │   └── route.ts
-│   │   │   │   ├── forgot-password/
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── reset-password/
+│   │   │   │   └── forgot-password/
 │   │   │   │       └── route.ts
 │   │   │   ├── users/
-│   │   │   │   ├── [id]/
-│   │   │   │   │   └── route.ts
 │   │   │   │   └── route.ts
 │   │   │   ├── products/
-│   │   │   │   ├── [id]/
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── search/
-│   │   │   │   │   └── route.ts
 │   │   │   │   └── route.ts
-│   │   │   ├── bookings/
-│   │   │   │   ├── [id]/
-│   │   │   │   │   └── route.ts
-│   │   │   │   ├── user/[userId]/
-│   │   │   │   │   └── route.ts
-│   │   │   │   └── route.ts
-│   │   │   └── help/
+│   │   │   └── bookings/
 │   │   │       └── route.ts
-│   │   └── route.ts
-│   ├── lib/
-│   │   ├── prisma.ts
-│   │   ├── auth.ts
-│   │   ├── jwt.ts
-│   │   └── utils.ts
-│   ├── middleware.ts
-│   ├── models/
-│   │   ├── user.ts
-│   │   ├── product.ts
-│   │   └── booking.ts
-│   ├── services/
-│   │   ├── auth.service.ts
-│   │   ├── user.service.ts
-│   │   ├── product.service.ts
-│   │   ├── booking.service.ts
-│   │   └── notification.service.ts
-│   ├── config/
-│   │   ├── database.ts
-│   │   └── constants.ts
-│   └── types/
-│       ├── user.types.ts
-│       ├── product.types.ts
-│       └── booking.types.ts
-├── prisma/
-│   ├── schema.prisma
-│   └── migrations/
-├── public/
-│   └── assets/
-├── scripts/
-│   └── seed.ts
-├── .env
-├── .env.example
-├── package.json
-├── tsconfig.json
-└── README.md
+│   │   └── dashboard/      # Admin dashboard (if needed)
+│   ├── lib/                # Shared libraries
+│   │   ├── db/             # Database connection
+│   │   │   └── prisma.ts
+│   │   ├── auth/           # Authentication utilities
+│   │   │   └── jwt.ts
+│   │   └── utils/          # Utility functions
+│   │       └── validators.ts
+│   ├── models/             # Data models
+│   │   ├── User.ts
+│   │   ├── Product.ts
+│   │   └── Booking.ts
+│   └── services/           # Business logic
+│       ├── authService.ts
+│       ├── userService.ts
+│       ├── productService.ts
+│       └── bookingService.ts
+└── prisma/                 # Database schema
+    └── schema.prisma
