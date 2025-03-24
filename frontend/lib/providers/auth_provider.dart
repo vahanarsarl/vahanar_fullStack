@@ -1,57 +1,104 @@
 import 'package:flutter/foundation.dart';
-import 'package:vahanar_front/services/auth_service.dart';
+import '../models/user_model.dart';
+import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
-  final AuthService _authService = AuthService();
+  User? _user;
   bool _isLoading = false;
-  String? _errorMessage;
+  final AuthService _authService = AuthService();
 
+  User? get user => _user;
   bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  bool get isLoggedIn => _user != null;
 
-  Future<void> registerUser({
-    required String fullName,
-    required String phone,
-    required String email,
-    required String password,
-  }) async {
+  // Initialize the provider
+  Future<void> initialize() async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
-      _isLoading = true;
-      notifyListeners();
-      
-      await _authService.registerUser(
-        fullName: fullName,
-        phone: phone,
-        email: email,
-        password: password,
-      );
-
-      _errorMessage = null;
+      final isLoggedIn = await _authService.isLoggedIn();
+      if (isLoggedIn) {
+        _user = await _authService.getCurrentUser();
+      }
     } catch (e) {
-      _errorMessage = e.toString();
+      print('Error initializing auth provider: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> loginUser({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      _isLoading = true;
-      notifyListeners();
-      
-      final response = await _authService.loginUser(
-        email: email,
-        password: password,
-      );
+  // Register user
+  Future<void> register(String email, String password, {String? firstName, String? lastName, String? phoneNumber}) async {
+    _isLoading = true;
+    notifyListeners();
 
-      // Store user session here
-      _errorMessage = null;
-    } catch (e) {
-      _errorMessage = e.toString();
+    try {
+      _user = await _authService.register(
+        email, 
+        password,
+        firstName: firstName,
+        lastName: lastName,
+        phoneNumber: phoneNumber,
+      );
+      notifyListeners();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Login user
+  Future<void> login(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _user = await _authService.login(email, password);
+      notifyListeners();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Forgot password
+  Future<void> forgotPassword(String email) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _authService.forgotPassword(email);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Verify phone
+  Future<void> verifyPhone(String code) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _user = await _authService.verifyPhone(code);
+      notifyListeners();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Logout
+  Future<void> logout() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _authService.logout();
+      _user = null;
+      notifyListeners();
     } finally {
       _isLoading = false;
       notifyListeners();
