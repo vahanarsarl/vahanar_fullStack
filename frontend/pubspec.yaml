@@ -17,6 +17,7 @@ dependencies:
   provider: ^6.1.2
   carousel_slider: ^5.0.0
   flutter_animate: ^4.1.1
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +31,7 @@ flutter:
   assets:
     - assets/images/vahanar.png
     - assets/images/grett.png
+    - assets/images/touareg.png
     - assets/icons/home.png
     - assets/icons/home_b.png
     - assets/icons/person.png
@@ -37,7 +39,9 @@ flutter:
     - assets/icons/search.png
     - assets/icons/search_b.png
     - assets/icons/valide.png
-
+    - assets/animations/earn.jpg
+    - assets/animations/earn1.jpg
+    
   # Fonts
   fonts:
     - family: LeagueSpartan

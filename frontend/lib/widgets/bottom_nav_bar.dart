@@ -1,24 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:vahanar_front/screens/home/home_screen.dart';
+import 'package:vahanar_front/screens/home/search_screen.dart';
 
 class BottomNavBar extends StatefulWidget {
+  final int selectedIndex; // Paramètre pour l'index actif
+
+  const BottomNavBar({super.key, this.selectedIndex = 1}); // Par défaut, "Home" est sélectionné
+
   @override
   _BottomNavBarState createState() => _BottomNavBarState();
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  int _selectedIndex = 1;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex; // Initialiser avec l'index passé
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+
+    // Gérer la navigation en fonction de l'index
+    if (index == 0 && ModalRoute.of(context)?.settings.name != '/search') {
+      // Naviguer vers SearchScreen si l'utilisateur n'est pas déjà sur cette page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SearchScreen()),
+      );
+    } else if (index == 1 && ModalRoute.of(context)?.settings.name != '/') {
+      // Naviguer vers HomeScreen si l'utilisateur n'est pas déjà sur cette page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
+    // Index 2 (Profile) : Pas de navigation pour l'instant
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 10),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.only(top: 10),
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30),
@@ -26,7 +54,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black12,
             spreadRadius: 2,
             blurRadius: 10,
           ),
@@ -47,7 +75,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         selectedFontSize: 14,
         unselectedFontSize: 14,
         selectedItemColor: Colors.white,
-        unselectedItemColor: Color(0xFF9DB2CE),
+        unselectedItemColor: const Color(0xFF9DB2CE),
       ),
     );
   }
@@ -59,35 +87,62 @@ class _BottomNavBarState extends State<BottomNavBar> {
       icon: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              if (isSelected)
+          Transform.translate(
+            offset: const Offset(0, -30), // Augmenter l'offset pour que le cercle monte davantage
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Cercle blanc (toujours présent, plus grand pour l'icône active)
                 Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Color(0xFF004852), // Couleur du bouton actif
+                  width: isSelected ? 70 : 50, // Augmenter la taille du cercle blanc pour l'icône active
+                  height: isSelected ? 70 : 50,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFF004852).withOpacity(0.5),
-                        blurRadius: 10,
+                        color: Colors.black12,
+                        blurRadius: 8,
                         spreadRadius: 2,
                       ),
                     ],
                   ),
                 ),
-              Image.asset(
-                isSelected
-                    ? 'assets/icons/${iconName}_b.png' // Icône blanche si actif
-                    : 'assets/icons/${iconName}.png', // Icône normale sinon
-                width: 30,
-                height: 30,
-              ),
-            ],
+                // Cercle bleu (uniquement pour l'icône active)
+                if (isSelected)
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF004852), // Couleur du bouton actif
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                // Icône
+                Image.asset(
+                  isSelected
+                      ? 'assets/icons/${iconName}_b.png' // Icône blanche si actif
+                      : 'assets/icons/${iconName}.png', // Icône normale sinon
+                  width: 30,
+                  height: 30,
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 4), // Ajout d'un espace pour éviter les chevauchements
+          const SizedBox(height: 8), // Augmenter l'espace entre l'icône et la ligne
+          // Ligne de terminaison en bas
+          Container(
+            width: 20,
+            height: 1, // Réduire la hauteur pour une ligne plus fine
+            color: isSelected ? Colors.white : const Color(0xFF9DB2CE),
+          ),
         ],
       ),
       label: label,

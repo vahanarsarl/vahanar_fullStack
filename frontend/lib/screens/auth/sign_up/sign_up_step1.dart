@@ -42,19 +42,19 @@ class _SignUpStep1ScreenState extends State<SignUpStep1Screen> {
             CustomTextField(
               controller: _nameController,
               icon: Icons.person,
-              hintText: "Full name",
+              hintText: "Full name", enabled: true,
             ),
             const SizedBox(height: 20),
             CustomTextField(
               controller: _emailController,
               icon: Icons.email,
-              hintText: "Email address",
+              hintText: "Email address", enabled: true,
             ),
             const SizedBox(height: 20),
             CustomTextField(
               controller: _phoneController,
               icon: Icons.phone,
-              hintText: "Phone number",
+              hintText: "Phone number", enabled: true,
             ),
             const Spacer(),
             CustomButton(
