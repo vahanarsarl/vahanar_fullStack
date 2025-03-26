@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vahanar_front/screens/home/home_screen.dart';
 import 'package:vahanar_front/screens/home/search_screen.dart';
-
+import 'package:vahanar_front/screens/profile/profile_screen.dart';
 class BottomNavBar extends StatefulWidget {
   final int selectedIndex; // Paramètre pour l'index actif
 
@@ -32,14 +32,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
         context,
         MaterialPageRoute(builder: (context) => const SearchScreen()),
       );
-    } else if (index == 1 && ModalRoute.of(context)?.settings.name != '/') {
+    } else if (index == 1 && ModalRoute.of(context)?.settings.name != '/home') {
       // Naviguer vers HomeScreen si l'utilisateur n'est pas déjà sur cette page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
+    } else if (index == 2 && ModalRoute.of(context)?.settings.name != '/profile') {
+      // Naviguer vers ProfileScreen si l'utilisateur n'est pas déjà sur cette page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfileScreen()),
+      );
     }
-    // Index 2 (Profile) : Pas de navigation pour l'instant
   }
 
   @override

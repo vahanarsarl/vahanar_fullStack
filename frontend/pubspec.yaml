@@ -32,6 +32,9 @@ flutter:
     - assets/images/vahanar.png
     - assets/images/grett.png
     - assets/images/touareg.png
+    - assets/images/profile_picture.png
+    - assets/icons/facebook.png
+    - assets/icons/insta.png
     - assets/icons/home.png
     - assets/icons/home_b.png
     - assets/icons/person.png

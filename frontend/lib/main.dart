@@ -12,7 +12,8 @@ import 'screens/auth/sign_up/finish_sign_up_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'screens/home/search_screen.dart';
 import 'screens/home/search_result_screen.dart';
-import 'screens/home/filter_screen.dart'; // Réimporter FilterScreen
+import 'screens/home/filter_screen.dart';
+import 'screens/profile/profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
               initialSeats: '4',
               initialDriverAge: '24',
             ),
+        '/profile': (context) => const ProfileScreen(), // Ajouter la route pour ProfileScreen
       },
     );
   }

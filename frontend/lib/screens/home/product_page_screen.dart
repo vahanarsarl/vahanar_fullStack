@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Pour parser les dates
 import 'package:vahanar_front/constants.dart'; // Import des constantes
 import 'package:vahanar_front/theme.dart'; // Import du thème
+import 'package:vahanar_front/screens/home/conditions_popup.dart'; // Importer le widget ConditionsPopup
 
 // Définition de la classe Vehicle pour représenter une voiture
 class Vehicle {
@@ -1618,6 +1619,18 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
     );
   }
 
+  // Fonction pour afficher la pop-up
+  void _showConditionsPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true, // Permet de fermer la pop-up en cliquant à l'extérieur
+      barrierColor: Colors.black.withOpacity(0.3), // Fond semi-transparent
+      builder: (BuildContext context) {
+        return const ConditionsPopup(); // Utiliser le widget ConditionsPopup
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -1726,7 +1739,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
           // Nom et sous-titre de la voiture
           Text(
             widget.name,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -1753,7 +1766,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
           _buildFeatureRow(Icons.luggage, 'Luggage', widget.luggage.toString()),
           const SizedBox(height: 20),
           // Description
-          Text(
+          const Text(
             'Car description',
             style: TextStyle(
               fontSize: 18,
@@ -1765,7 +1778,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
           const SizedBox(height: 8),
           // Affichage de la description avec "Read more..." après 4 lignes
           description.isEmpty
-              ? Text(
+              ? const Text(
                   'No description available.',
                   style: TextStyle(
                     fontSize: 14,
@@ -1779,7 +1792,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                     _isExpanded
                         ? Text(
                             description,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               color: Colors.black87,
                               fontFamily: 'LeagueSpartan-Light',
@@ -1790,7 +1803,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                               children: [
                                 TextSpan(
                                   text: description,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.black87,
                                     fontFamily: 'LeagueSpartan-Light',
@@ -1803,7 +1816,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                                         _isExpanded = true; // Affiche la description complète
                                       });
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       ' Read more...',
                                       style: TextStyle(
                                         fontSize: 14,
@@ -1826,7 +1839,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                             _isExpanded = false; // Masque la description complète
                           });
                         },
-                        child: Text(
+                        child: const Text(
                           'Read less',
                           style: TextStyle(
                             fontSize: 14,
@@ -1846,7 +1859,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'TOTAL',
                     style: TextStyle(
                       fontSize: 18,
@@ -1860,7 +1873,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                     onTap: () {
                       // Logique pour afficher les détails du prix (non implémentée ici)
                     },
-                    child: Text(
+                    child: const Text(
                       'Price details',
                       style: TextStyle(
                         fontSize: 14,
@@ -1874,7 +1887,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
               ),
               Text(
                 widget.estimatedTotal.replaceAll(' est. total', ''),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -1884,12 +1897,12 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          // Bouton "Reserve"
+          // Bouton "Reserve" qui ouvre la pop-up
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // Logique pour réserver la voiture (non implémentée ici)
+                _showConditionsPopup(context); // Afficher la pop-up
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF004852),
@@ -1898,7 +1911,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Reserve',
                 style: TextStyle(
                   fontSize: 16,
@@ -1923,7 +1936,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
           const SizedBox(width: 12),
           Text(
             label,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.black87,
               fontFamily: 'LeagueSpartan-SemiBold',
@@ -1932,7 +1945,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
           const Spacer(),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.black87,
               fontFamily: 'LeagueSpartan-Light',

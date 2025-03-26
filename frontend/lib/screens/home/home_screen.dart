@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 width: screenWidth, // Occupe toute la largeur de l'écran
                 padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFF004852), // Vert foncé basé sur l'image
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(24), // Rayon de 24 en bas à gauche
@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.only(bottom: 2.0), // Espacement pour la bordure
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         border: Border(bottom: BorderSide(color: Colors.white, width: 1.0)), // Bordure de 1 pixel
                       ),
                       child: Text(
@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         // Action pour les notifications
                       },
+                      tooltip: 'Notifications', // Ajout pour l'accessibilité
                     ),
                   ],
                 ),
@@ -160,6 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // Naviguer vers SearchScreen et attendre le résultat
                                   _navigateToSearchScreen(context);
                                 },
+                                tooltip: 'Go to Search', // Ajout pour l'accessibilité
                               ),
                             ],
                           ),
@@ -187,25 +189,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    // Indicateur de page (dots) avec boucle et limite de 5
+                    // Indicateur de page (dots) simplifié
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                          5, // Limite à 5 points
-                          (index) {
-                            int actualIndex = index % displayedRecentSearches.length; // Boucle si > 5
-                            return Container(
-                              width: 8.0,
-                              height: 8.0,
-                              margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _currentCarouselIndex == actualIndex
-                                    ? Colors.black // Point actif
-                                    : Colors.grey.withOpacity(0.5), // Points inactifs
-                              ),
-                            );
-                          }),
+                        displayedRecentSearches.length, // Utiliser directement la longueur
+                        (index) {
+                          return Container(
+                            width: 8.0,
+                            height: 8.0,
+                            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _currentCarouselIndex == index
+                                  ? Colors.black // Point actif
+                                  : Colors.grey.withOpacity(0.5), // Points inactifs
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     const SizedBox(height: 20),
 
@@ -328,32 +330,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 20),
 
                     // Bouton "Need Help?" ajusté
-                    Container(
-                      width: double.infinity, // Occupe toute la largeur
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Icon(Icons.help_outline, color: Colors.black),
-                          Text(
-                            'Need Help?',
-                            style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.black,
+                    GestureDetector(
+                      onTap: () {
+                        // Action pour "Need Help?"
+                      },
+                      child: Container(
+                        width: double.infinity, // Occupe toute la largeur
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                          const Icon(Icons.arrow_forward, color: Colors.black),
-                        ],
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Icon(Icons.help_outline, color: Colors.black),
+                            Text(
+                              'Need Help?',
+                              style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+                                color: Colors.black,
+                              ),
+                            ),
+                            const Icon(Icons.arrow_forward, color: Colors.black),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
