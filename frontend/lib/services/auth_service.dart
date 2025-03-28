@@ -1,79 +1,134 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:vahanar_front/utils/validators.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:vahanar_front/config/api_config.dart';
+import '../models/user_model.dart';
 
 class AuthService {
-  static const String baseUrl = "http://192.182.209.128/pages/api/auth";
+  final storage = const FlutterSecureStorage();
 
-  Future<Map<String, dynamic>> registerUser({
-    required String fullName,
-    required String phone,
-    required String email,
-    required String password,
-  }) async {
-    try {
-      // Validate inputs first
-      Validators.validateEmail(email);
-      Validators.validatePassword(password);
-      Validators.validatePhoneNumber(phone);
+  // Vérifier si l'utilisateur est connecté
+  Future<bool> isLoggedIn() async {
+    final token = await storage.read(key: 'auth_token');
+    return token != null;
+  }
 
-      final response = await http.post(
-        Uri.parse('$baseUrl/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'fullName': fullName,
-          'phone': phone,
-          'email': email,
-          'password': password,
-        }),
-      );
+  // Récupérer l'utilisateur actuel
+  Future<User?> getCurrentUser() async {
+    final token = await storage.read(key: 'auth_token');
+    if (token == null) return null;
 
-      final responseBody = jsonDecode(response.body);
+    final response = await http.get(
+      Uri.parse(ApiConfig.baseUrl + ApiConfig.userProfile),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
-      if (response.statusCode == 201) {
-        return responseBody;
-      } else if (response.statusCode == 400) {
-        throw Exception('Bad request: ${responseBody['message']}');
-      } else if (response.statusCode == 401) {
-        throw Exception('Unauthorized: ${responseBody['message']}');
-      } else if (response.statusCode == 500) {
-        throw Exception('Server error: ${responseBody['message']}');
-      } else {
-        throw Exception(responseBody['message'] ?? 'Registration failed');
-      }
-    } on http.ClientException catch (e) {
-      throw Exception('Network error: ${e.message}');
-    } catch (e) {
-      throw Exception('Registration error: $e');
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception(jsonDecode(response.body)['error'] ?? 'Failed to load user profile');
     }
   }
 
-  Future<Map<String, dynamic>> loginUser({
-    required String email,
-    required String password,
+  // Inscription
+  Future<User> register(
+    String email,
+    String password, {
+    String? firstName,
+    String? lastName,
+    String? phoneNumber,
   }) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
-      );
+    final response = await http.post(
+      Uri.parse(ApiConfig.baseUrl + ApiConfig.register),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+        'firstName': firstName,
+        'lastName': lastName,
+        'phoneNumber': phoneNumber,
+      }),
+    );
 
-      final responseBody = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        return responseBody;
-      } else if (response.statusCode == 400) {
-        throw Exception('Bad request: ${responseBody['message']}');
-      } else if (response.statusCode == 401) {
-        throw Exception('Unauthorized: ${responseBody['message']}');
-      } else if (response.statusCode == 500) {
-        throw Exception('Server error: ${responseBody['message']}');
-      } else {
-        throw Exception(responseBody['message'] ?? 'Login failed');
-      }
-    } catch (e) {
-      throw Exception('Login error: $e');
+    if (response.statusCode == 201) {
+      final data = jsonDecode(response.body);
+      final token = data['token'];
+      await storage.write(key: 'auth_token', value: token);
+      return User.fromJson(data['user']);
+    } else {
+      throw Exception(jsonDecode(response.body)['error'] ?? 'Failed to register');
     }
+  }
+
+  // Connexion
+  Future<User> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.baseUrl + ApiConfig.login),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final token = data['token'];
+      await storage.write(key: 'auth_token', value: token);
+      return User.fromJson(data['user']);
+    } else {
+      throw Exception(jsonDecode(response.body)['error'] ?? 'Failed to login');
+    }
+  }
+
+  // Mot de passe oublié
+  Future<void> forgotPassword(String email) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.baseUrl + ApiConfig.forgotPassword),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'email': email,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(jsonDecode(response.body)['error'] ?? 'Failed to send reset email');
+    }
+  }
+
+  // Vérification du téléphone
+  Future<User> verifyPhone(String code) async {
+    final token = await storage.read(key: 'auth_token');
+    if (token == null) throw Exception('No user logged in');
+
+    final response = await http.post(
+      Uri.parse(ApiConfig.baseUrl + ApiConfig.verifyPhone),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'code': code,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception(jsonDecode(response.body)['error'] ?? 'Failed to verify phone');
+    }
+  }
+
+  // Déconnexion
+  Future<void> logout() async {
+    await storage.delete(key: 'auth_token');
   }
 }

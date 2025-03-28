@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vahanar_front/widgets/bottom_nav_bar.dart'; // Importer la barre de navigation
+import 'package:provider/provider.dart';
+import 'package:vahanar_front/providers/auth_provider.dart';
+import 'package:vahanar_front/widgets/bottom_nav_bar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -20,31 +22,40 @@ class ProfileScreen extends StatelessWidget {
                     _buildOptionTile(
                       icon: Icons.credit_card,
                       title: 'Driving licence',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, '/driving_licence');
+                      },
                     ),
                     const SizedBox(height: 20),
                     _buildOptionTile(
                       icon: Icons.help_outline,
                       title: 'Help center',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, '/help_center');
+                      },
                     ),
                     const SizedBox(height: 20),
                     _buildOptionTile(
                       icon: Icons.calendar_today,
                       title: 'My reservations',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, '/my_reservations');
+                      },
                     ),
                     const SizedBox(height: 20),
                     _buildOptionTile(
                       icon: Icons.lock,
                       title: 'General conditions',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, '/general_conditions');
+                      },
                     ),
                     const SizedBox(height: 20),
                     _buildOptionTile(
                       icon: Icons.logout,
                       title: 'Log out',
-                      onTap: () {
+                      onTap: () async {
+                        await Provider.of<AuthProvider>(context, listen: false).logout();
                         Navigator.pushReplacementNamed(context, '/sign_in');
                       },
                     ),
@@ -62,11 +73,18 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    // Récupérer l'utilisateur connecté via AuthProvider
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.user;
+    // Construire le nom complet à partir de firstName et lastName
+    final fullName = user != null ? '${user.firstName} ${user.lastName}' : 'John Doe';
+
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
       color: const Color(0xFF2A4D50),
       child: Column(
         children: [
+          // Barre de navigation (flèche, titre, icône de menu)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -85,48 +103,62 @@ class ProfileScreen extends StatelessWidget {
                   fontFamily: 'LeagueSpartan-Bold',
                 ),
               ),
-              const SizedBox(width: 48),
+              IconButton(
+                icon: const Icon(Icons.menu, color: Colors.white),
+                onPressed: () {
+                  // Ajouter une action pour le menu si nécessaire
+                },
+              ),
             ],
           ),
           const SizedBox(height: 16),
-          // Centrer l'image, le nom et "Edit Profile"
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          // Image de profil et textes (nom + "Edit Profile") côte à côte
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Image de profil carrée avec coins arrondis
+              // Image de profil rectangulaire
               Container(
-                width: 80, // Agrandir l'image
-                height: 80,
+                width: 100,
+                height: 100,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8), // Coins arrondis (radius 8)
+                  borderRadius: BorderRadius.circular(8),
                   image: const DecorationImage(
                     image: AssetImage('assets/images/profile_picture.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
-              // Nom "John Doe" agrandi
-              const Text(
-                'John Doe',
-                style: TextStyle(
-                  fontSize: 24, // Taille agrandie
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'LeagueSpartan-Bold',
-                ),
-              ),
-              const SizedBox(height: 4),
-              // "Edit Profile" en gris, non souligné, agrandi
-              GestureDetector(
-                onTap: () {},
-                child: const Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    fontSize: 16, // Taille agrandie
-                    color: Colors.grey, // En gris
-                    fontFamily: 'LeagueSpartan-Light',
-                  ),
+              const SizedBox(width: 12),
+              // Nom et "Edit Profile" centrés dans l'espace restant
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      fullName,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontFamily: 'LeagueSpartan-Bold',
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    GestureDetector(
+                      onTap: () {
+                        // Ajouter une action pour "Edit Profile" si nécessaire
+                      },
+                      child: const Text(
+                        'Edit Profile',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.grey,
+                          fontFamily: 'LeagueSpartan-Light',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -151,16 +183,15 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildFooter() {
     return Column(
       children: [
-        // Ligne avec épaisseur 4 et couleur teal
         Container(
-          height: 4, // Épaisseur de 4
-          color: const Color(0xFF2A4D50), // Couleur teal
+          height: 4,
+          color: const Color(0xFF2A4D50),
         ),
         const SizedBox(height: 16),
         const Text(
           'Get to know more about US :',
           style: TextStyle(
-            fontSize: 16, // Taille agrandie
+            fontSize: 16,
             color: Color(0xFF2A4D50),
             fontFamily: 'LeagueSpartan-Light',
           ),
@@ -171,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             IconButton(
               icon: Image.asset(
-                'assets/icones/facebook.png',
+                'assets/icons/facebook.png',
                 width: 30,
                 height: 30,
               ),
@@ -180,7 +211,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(width: 16),
             IconButton(
               icon: Image.asset(
-                'assets/icones/insta.png',
+                'assets/icons/insta.png',
                 width: 30,
                 height: 30,
               ),
@@ -188,13 +219,12 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16), // Pas de marge blanche excessive
+        const SizedBox(height: 16),
       ],
     );
   }
 }
 
-// Widget personnalisé pour gérer l'animation de flottement
 class AnimatedOptionTile extends StatefulWidget {
   final IconData icon;
   final String title;
@@ -226,7 +256,7 @@ class _AnimatedOptionTileState extends State<AnimatedOptionTile>
     );
     _offsetAnimation = Tween<Offset>(
       begin: Offset.zero,
-      end: const Offset(0.1, 0), // Décalage vers la droite
+      end: const Offset(0.1, 0),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
@@ -244,7 +274,15 @@ class _AnimatedOptionTileState extends State<AnimatedOptionTile>
       _isTapped = true;
     });
     _controller.forward().then((_) {
-      widget.onTap(); // Appeler la navigation après l'animation
+      widget.onTap();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted) {
+          setState(() {
+            _isTapped = false;
+          });
+          _controller.reverse();
+        }
+      });
     });
   }
 
@@ -257,21 +295,21 @@ class _AnimatedOptionTileState extends State<AnimatedOptionTile>
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: _isTapped ? Colors.grey.shade200 : Colors.transparent, // Effet de surbrillance
+            color: _isTapped ? Colors.grey.shade200 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
               Icon(
                 widget.icon,
-                size: 30, // Taille agrandie
+                size: 30,
                 color: Colors.black,
               ),
               const SizedBox(width: 16),
               Text(
                 widget.title,
                 style: const TextStyle(
-                  fontSize: 18, // Taille agrandie
+                  fontSize: 18,
                   color: Colors.black,
                   fontFamily: 'LeagueSpartan-Light',
                 ),
