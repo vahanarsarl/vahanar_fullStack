@@ -25,6 +25,7 @@ import 'screens/home/search_result_screen.dart';
 import 'screens/home/filter_screen.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/help_center/help_center_screen.dart';
+import 'screens/profile/reservations_history_screen.dart'; // Importation de ReservationsHistoryScreen
 
 // Placeholders pour les pages manquantes
 class DrivingLicenceScreen extends StatelessWidget {
@@ -34,17 +35,6 @@ class DrivingLicenceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(child: Text('Driving Licence Screen')),
-    );
-  }
-}
-
-class MyReservationsScreen extends StatelessWidget {
-  const MyReservationsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('My Reservations Screen')),
     );
   }
 }
@@ -79,11 +69,11 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Vahanar',
         theme: AppTheme.lightTheme,
-        initialRoute: '/sign_up', // Changé pour tester le flux d'inscription
+        initialRoute: '/sign_up', // Route initiale pour tester le flux d'inscription
         routes: {
           '/': (context) => const SplashScreen(),
           '/greeting': (context) => const GreetingScreen(),
-          '/sign_up': (context) => const SignUpStep1Screen(), // Ajouté pour le lien "Sign in"
+          '/sign_up': (context) => const SignUpStep1Screen(),
           '/sign_up/step1': (context) => const SignUpStep1Screen(),
           '/sign_up/step2': (context) => const VerifyPhoneScreen(),
           '/sign_up/create_password': (context) => const CreatePasswordScreen(),
@@ -108,7 +98,7 @@ class MyApp extends StatelessWidget {
           '/profile': (context) => const ProfileScreen(),
           '/driving_licence': (context) => const DrivingLicenceScreen(),
           '/help_center': (context) => const HelpCenterScreen(),
-          '/my_reservations': (context) => const MyReservationsScreen(),
+          '/my_reservations': (context) => const ReservationsHistoryScreen(), // Utilisation de ReservationsHistoryScreen
           '/general_conditions': (context) => const GeneralConditionsScreen(),
         },
       ),

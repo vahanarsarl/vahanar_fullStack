@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:vahanar_front/widgets/bottom_nav_bar.dart';
 
 class HelpCenterScreen extends StatefulWidget {
-  const HelpCenterScreen({super.key});
+  const HelpCenterScreen({Key? key}) : super(key: key);
 
   @override
   _HelpCenterScreenState createState() => _HelpCenterScreenState();
 }
 
 class _HelpCenterScreenState extends State<HelpCenterScreen> {
-  bool _showFAQ = true; // Variable pour gérer l'affichage entre FAQ et Contact Us
+  bool _showFAQ = true;
+  int? _expandedIndex;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Fond blanc comme dans l'image
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
             // Header personnalisé
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              color: const Color(0xFF2A4D50), // Couleur verte foncée
+              color: const Color(0xFF2A4D50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -43,6 +44,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       color: Colors.white,
                       fontFamily: 'LeagueSpartan-Bold',
                       decoration: TextDecoration.underline,
+                      decorationColor: Colors.white,
                     ),
                   ),
                 ],
@@ -54,8 +56,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 decoration: BoxDecoration(
-                  color: Colors.white, // Fond blanc comme dans l'image
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Row(
                   children: [
@@ -88,6 +91,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       onPressed: () {
                         setState(() {
                           _showFAQ = true;
+                          _expandedIndex = null;
                         });
                       },
                       style: ElevatedButton.styleFrom(
@@ -114,6 +118,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       onPressed: () {
                         setState(() {
                           _showFAQ = false;
+                          _expandedIndex = null;
                         });
                       },
                       style: ElevatedButton.styleFrom(
@@ -145,7 +150,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 1), // Ajuste l'index selon ta navigation
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 1),
     );
   }
 
@@ -155,12 +160,18 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       itemCount: 4,
       itemBuilder: (context, index) {
-        return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+        return Container( // Utilisation de Container au lieu de Card pour le style
+          decoration: BoxDecoration(
+            color: Colors.grey[50], // Fond gris clair
+            borderRadius: BorderRadius.circular(25), // Bords arrondis
+            border: Border.all(
+              color: Colors.grey.shade300, // Bordure discrète
+              width: 1,
+            ),
           ),
+          margin: const EdgeInsets.symmetric(vertical: 8.0), // Espacement entre les cases
           child: ExpansionTile(
+            initiallyExpanded: index == _expandedIndex,
             title: const Text(
               'Lorem ipsum dolor sit amet?',
               style: TextStyle(
@@ -186,6 +197,15 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 ),
               ),
             ],
+            onExpansionChanged: (bool expanded) {
+              setState(() {
+                if (expanded) {
+                  _expandedIndex = index;
+                } else {
+                  _expandedIndex = null;
+                }
+              });
+            },
           ),
         );
       },
@@ -194,35 +214,96 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
 
   // Contenu Contact Us
   Widget _buildContactUsContent() {
-    return ListView(
+    return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      children: [
-        _buildContactItem(Icons.headset, 'Customer Service'),
-        _buildContactItem(Icons.web, 'Website'),
-        _buildContactItem(Icons.phone, 'Whatsapp'),
-        _buildContactItem(Icons.facebook, 'Facebook'),
-        _buildContactItem(Icons.camera_alt, 'Instagram'),
-      ],
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return _buildContactItem(index);
+      },
     );
   }
 
   // Méthode pour les éléments de Contact Us
-  Widget _buildContactItem(IconData icon, String title) {
-    return ExpansionTile(
-      leading: Icon(icon, color: Colors.grey),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontFamily: 'LeagueSpartan-Light',
-          color: Colors.black,
+  Widget _buildContactItem(int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[50], // Fond gris clair
+        borderRadius: BorderRadius.circular(25), // Bords arrondis
+        border: Border.all(
+          color: Colors.grey.shade300, // Bordure discrète
+          width: 1,
         ),
       ),
-      trailing: Icon(
-        Icons.expand_more,
-        color: const Color(0xFF2A4D50),
+      margin: const EdgeInsets.symmetric(vertical: 8.0), // Espacement entre les cases
+      child: ExpansionTile(
+        initiallyExpanded: index == _expandedIndex,
+        leading: Padding(
+          padding: const EdgeInsets.only(right: 8.0), //Espacement a droite de l'icone
+          child: Image.asset(
+            'assets/icons/${_getContactIconName(index)}.png', // Chemin de l'icône
+            width: 24, // Ajustez la taille selon vos besoins
+            height: 24,
+            color: const Color(0xFF2A4D50), // Ajout de la couleur verte foncée
+          ),
+        ),
+        title: Text(
+          _getContactTitle(index),
+          style: const TextStyle(
+            fontSize: 16,
+            fontFamily: 'LeagueSpartan-Light',
+            color: Colors.black,
+          ),
+        ),
+        trailing: Icon(
+          Icons.expand_more,
+          color: const Color(0xFF2A4D50),
+        ),
+        children: const [],
+        onExpansionChanged: (bool expanded) {
+          setState(() {
+            if (expanded) {
+              _expandedIndex = index;
+            } else {
+              _expandedIndex = null;
+            }
+          });
+        },
       ),
-      children: const [], // Ajoute du contenu si nécessaire
     );
+  }
+
+  String _getContactIconName(int index) {
+    // Correspond aux noms des fichiers d'icônes dans votre dossier assets/icons
+    switch (index) {
+      case 0:
+        return 'eclipse1';
+      case 1:
+        return 'eclipse2';
+      case 2:
+        return 'eclipse3';
+      case 3:
+        return 'eclipse4';
+      case 4:
+        return 'eclipse5';
+      default:
+        return 'error'; // Icône par défaut
+    }
+  }
+
+  String _getContactTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Customer Service';
+      case 1:
+        return 'Website';
+      case 2:
+        return 'Whatsapp';
+      case 3:
+        return 'Facebook';
+      case 4:
+        return 'Instagram';
+      default:
+        return 'Unknown';
+    }
   }
 }

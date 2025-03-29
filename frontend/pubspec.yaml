@@ -45,6 +45,11 @@ flutter:
     - assets/icons/valide.png
     - assets/animations/earn.jpg
     - assets/animations/earn1.jpg
+    - assets/icons/eclipse1.png
+    - assets/icons/eclipse2.png
+    - assets/icons/eclipse3.png
+    - assets/icons/eclipse4.png
+    - assets/icons/eclipse5.png
     
   # Fonts
   fonts:

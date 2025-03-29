@@ -39,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
                       icon: Icons.calendar_today,
                       title: 'My reservations',
                       onTap: () {
-                        Navigator.pushNamed(context, '/my_reservations');
+                        Navigator.pushNamed(context, '/my_reservations'); // Navigation vers ReservationsHistoryScreen
                       },
                     ),
                     const SizedBox(height: 20),
