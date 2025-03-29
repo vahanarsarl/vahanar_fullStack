@@ -73,10 +73,8 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    // Récupérer l'utilisateur connecté via AuthProvider
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.user;
-    // Construire le nom complet à partir de firstName et lastName
     final fullName = user != null ? '${user.firstName} ${user.lastName}' : 'John Doe';
 
     return Container(
@@ -84,7 +82,6 @@ class ProfileScreen extends StatelessWidget {
       color: const Color(0xFF2A4D50),
       child: Column(
         children: [
-          // Barre de navigation (flèche, titre, icône de menu)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -105,18 +102,14 @@ class ProfileScreen extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.menu, color: Colors.white),
-                onPressed: () {
-                  // Ajouter une action pour le menu si nécessaire
-                },
+                onPressed: () {},
               ),
             ],
           ),
           const SizedBox(height: 16),
-          // Image de profil et textes (nom + "Edit Profile") côte à côte
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Image de profil rectangulaire
               Container(
                 width: 100,
                 height: 100,
@@ -129,7 +122,6 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // Nom et "Edit Profile" centrés dans l'espace restant
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,9 +138,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     GestureDetector(
-                      onTap: () {
-                        // Ajouter une action pour "Edit Profile" si nécessaire
-                      },
+                      onTap: () {},
                       child: const Text(
                         'Edit Profile',
                         style: TextStyle(

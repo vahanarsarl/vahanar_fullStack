@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:provider/provider.dart';
-import 'package:vahanar_front/providers/auth_provider.dart';
+import 'package:vahanar_front/widgets/app_bar.dart';
+import 'package:vahanar_front/widgets/custom_button.dart';
+import 'package:vahanar_front/constants.dart'; // Importation des constants
 
 class VerifyPhoneScreen extends StatefulWidget {
   const VerifyPhoneScreen({super.key});
@@ -12,179 +13,106 @@ class VerifyPhoneScreen extends StatefulWidget {
 
 class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   final TextEditingController _otpController = TextEditingController();
-  bool _isLoading = false;
-
-  @override
-  void dispose() {
-    _otpController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleVerify(String phoneNumber) async {
-    if (_otpController.text.length != 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter a valid OTP")),
-      );
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.verifyPhone(_otpController.text);
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (success) {
-      Navigator.pushReplacementNamed(context, '/profile');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(authProvider.error ?? 'Failed to verify phone number')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    // Récupérer le numéro de téléphone passé depuis CreatePasswordScreen
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final phoneNumber = arguments['phoneNumber'] as String;
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header personnalisé
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+      appBar: CustomAppBar(
+        title: "Verify Phone",
+        backgroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              "Verify your phone number",
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'LeagueSpartan',
+                color: AppConstants.textColor,
+              ),
+            ),
+            const SizedBox(height: 10),
+            RichText(
+              text: const TextSpan(
+                text: "We've sent an SMS with an activation code to your phone ",
+                style: TextStyle(color: Colors.black54, fontSize: 16, fontFamily: 'LeagueSpartan'),
+                children: [
+                  TextSpan(
+                    text: "+212 6 14 74 61 98",
+                    style: TextStyle(
+                      color: AppConstants.primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'LeagueSpartan',
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Titre "Verify your phone number"
-              const Text(
-                'Verify your phone number',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontFamily: 'LeagueSpartan-Bold',
-                ),
-              ),
-              const SizedBox(height: 10),
-              // Texte descriptif
-              RichText(
-                text: TextSpan(
-                  text: "We've sent an SMS with an activation code to your phone ",
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
-                    fontFamily: 'LeagueSpartan-Light',
                   ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+            PinCodeTextField(
+              appContext: context,
+              length: 5,
+              controller: _otpController,
+              keyboardType: TextInputType.number,
+              pinTheme: PinTheme(
+                shape: PinCodeFieldShape.box,
+                borderRadius: BorderRadius.circular(8),
+                fieldHeight: 50,
+                fieldWidth: 45,
+                activeFillColor: Colors.white,
+                inactiveFillColor: Colors.grey.shade200,
+                selectedFillColor: Colors.white,
+                activeColor: AppConstants.primaryColor,
+                inactiveColor: Colors.grey.shade400,
+                selectedColor: AppConstants.primaryColor,
+              ),
+              cursorColor: AppConstants.primaryColor,
+              onChanged: (value) {},
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: RichText(
+                text: const TextSpan(
+                  text: "I didn’t receive a code ",
+                  style: TextStyle(color: Colors.black45, fontFamily: 'LeagueSpartan'),
                   children: [
                     TextSpan(
-                      text: phoneNumber,
-                      style: const TextStyle(
-                        color: Color(0xFF2A4D50),
+                      text: "Resend",
+                      style: TextStyle(
+                        color: AppConstants.primaryColor,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'LeagueSpartan-Light',
+                        fontFamily: 'LeagueSpartan',
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
-              // Champs OTP
-              PinCodeTextField(
-                appContext: context,
-                length: 5,
-                controller: _otpController,
-                keyboardType: TextInputType.number,
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(8),
-                  fieldHeight: 50,
-                  fieldWidth: 45,
-                  activeFillColor: Colors.white,
-                  inactiveFillColor: Colors.white,
-                  selectedFillColor: Colors.white,
-                  activeColor: Colors.grey,
-                  inactiveColor: Colors.grey,
-                  selectedColor: const Color(0xFF2A4D50),
-                ),
-                cursorColor: const Color(0xFF2A4D50),
-                onChanged: (value) {},
-              ),
-              const SizedBox(height: 10),
-              // Texte "I didn’t receive a code Resend"
-              Center(
-                child: RichText(
-                  text: const TextSpan(
-                    text: "I didn’t receive a code ",
-                    style: TextStyle(
-                      color: Colors.black45,
-                      fontFamily: 'LeagueSpartan-Light',
-                      fontSize: 16,
+            ),
+            const Spacer(),
+            CustomButton(
+              text: "Verify",
+              onPressed: () {
+                if (_otpController.text.length == 5) {
+                  Navigator.pushNamed(context, '/sign_up/finish'); // Redirection vers FinishSignUpScreen
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please enter a valid OTP"),
                     ),
-                    children: [
-                      TextSpan(
-                        text: "Resend",
-                        style: TextStyle(
-                          color: Color(0xFF2A4D50),
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'LeagueSpartan-Light',
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const Spacer(),
-              // Bouton "Verify"
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : () => _handleVerify(phoneNumber),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2A4D50),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'Verify',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontFamily: 'LeagueSpartan-Bold',
-                          ),
-                        ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
+                  );
+                }
+              },
+              color: AppConstants.primaryColor,
+              width: double.infinity,
+              height: 50, isLoading: null,
+            ),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );
