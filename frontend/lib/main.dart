@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Vahanar',
         theme: AppTheme.lightTheme,
-        initialRoute: '/sign_up', // Route initiale pour tester le flux d'inscription
+        initialRoute: '/splash_screen', // Route initiale pour tester le flux d'inscription
         routes: {
           '/': (context) => const SplashScreen(),
           '/greeting': (context) => const GreetingScreen(),

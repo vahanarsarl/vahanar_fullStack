@@ -31,7 +31,7 @@ flutter:
   # Assets
   assets:
     - assets/images/vahanar.png
-    - assets/images/grett.png
+    - assets/images/vahanful.png
     - assets/images/touareg.png
     - assets/images/profile_picture.png
     - assets/icons/facebook.png

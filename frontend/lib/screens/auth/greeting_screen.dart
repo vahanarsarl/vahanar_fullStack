@@ -1,131 +1,179 @@
 import 'package:flutter/material.dart';
 import 'package:vahanar_front/widgets/custom_button.dart';
 import 'package:vahanar_front/constants.dart';
+
 class GreetingScreen extends StatelessWidget {
-  const GreetingScreen({super.key});
+  const GreetingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/grett.png',
-              fit: BoxFit.cover,
+          // Background Image
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: screenHeight * 0.5, // Ajuster la hauteur de l'image (50% de l'écran)
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(0.0)), // Supprimer les bords arrondis
+              child: Image.asset(
+                'assets/images/vahanful.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.topCenter,
+                width: screenWidth,
+                height: screenHeight * 0.5,
+              ),
             ),
           ),
+          // Gradient Overlay (Adjusted)
+          Positioned(
+            top: screenHeight * 0.3, // Début du dégradé à 30% de la hauteur de l'écran
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.8),
+                  ],
+                  stops: const [0.0, 0.8], // Ajuster les stops du dégradé
+                ),
+              ),
+            ),
+          ),
+          // Content (Moved to the top of the stack)
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 40.0),
+                  const SizedBox(height: 20.0),
                   Text(
                     'VAHANAR',
                     style: TextStyle(
-                      fontSize: 35.0,
+                      fontSize: 48.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontFamily: 'LeagueSpartan',
                     ),
                   ),
-                  const SizedBox(height: 10.0),
-                  Text(
-                    'Join Vahanar and live the way you want where you want',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Colors.white,
-                      fontFamily: 'LeagueSpartan',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 30.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     'Earn points',
                     style: TextStyle(
-                      fontSize: 24.0,
+                      fontSize: 28.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       fontFamily: 'LeagueSpartan',
                     ),
                   ),
-                  const SizedBox(height: 10.0),
+                  const SizedBox(height: 16.0),
                   Text(
                     'Earn Vahanar points for every valuable dollar you spend and redeem for rewards and accessories',
                     style: TextStyle(
-                      fontSize: 16.0,
-                      color: Colors.white,
+                      fontSize: 18.0,
+                      color: Colors.white.withOpacity(0.8),
                       fontFamily: 'LeagueSpartan',
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
+                      height: 1.4,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const Spacer(),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(18.0)),
-                    ),
-                    padding: const EdgeInsets.all(16.0),
+                  // Buttons
+                  SizedBox(
+                    width: screenWidth * 0.8,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         CustomButton(
-                          text: 'Créer un compte',
+                          text: 'Create account',
                           onPressed: () {
                             Navigator.pushNamed(context, '/sign_up/step1');
                           },
-                          color: AppConstants.primaryColor, isLoading: null,
+                          color: const Color(0xFF43919D),
+                          borderRadius: BorderRadius.circular(12.0),
+                          textStyle: const TextStyle(
+                            fontFamily: 'LeagueSpartan',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                            color: Colors.white,
+                          ), isLoading: null,
                         ),
-                        const SizedBox(height: 10.0),
+                        const SizedBox(height: 16.0),
                         CustomButton(
-                          text: 'Se connecter',
+                          text: 'Login',
                           onPressed: () {
-                            Navigator.pushNamed(context, '/sign_in'); // Redirection vers l'écran de connexion
+                            Navigator.pushNamed(context, '/sign_in');
                           },
-                          color: Colors.black, isLoading: null,
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(12.0),
+                          textStyle: const TextStyle(
+                            fontFamily: 'LeagueSpartan',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                            color: Colors.white,
+                          ), isLoading: null,
                         ),
-                        const SizedBox(height: 10.0),
-                        OutlinedButton(
+                        const SizedBox(height: 16.0),
+                        TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/home');
                           },
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppConstants.primaryColor,
-                            side: BorderSide(color: AppConstants.primaryColor),
-                          ),
-                          child: const Text('Rejoindre en tant qu\'invité'),
-                        ),
-                        const SizedBox(height: 30.0),
-                        Text(
-                          'want to get more informations about Us',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.black,
-                            fontFamily: 'LeagueSpartan',
-                            fontWeight: FontWeight.w400,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/about_us');
-                          },
-                          child: Text(
-                            'Find more about us',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.black,
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            textStyle: const TextStyle(
                               fontFamily: 'LeagueSpartan',
                               fontWeight: FontWeight.w400,
-                              decoration: TextDecoration.underline,
+                              fontSize: 16.0,
                             ),
                           ),
+                          child: const Text('Join as guest'),
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 32.0),
+                  // Information Text
+                  Column(
+                    children: [
+                      Text(
+                        'Want to get more information about us',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white.withOpacity(0.8),
+                          fontFamily: 'LeagueSpartan',
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/about_us');
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.white,
+                            fontFamily: 'LeagueSpartan',
+                            fontWeight: FontWeight.w400,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        child: const Text('Find more about us'),
+                      ),
+                    ],
                   ),
                 ],
               ),
