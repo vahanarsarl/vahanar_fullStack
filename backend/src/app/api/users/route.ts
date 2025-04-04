@@ -3,6 +3,16 @@ import { prisma } from '../../../lib/db/prisma';
 import { updateUserSchema } from '../../../lib/utils/validators';
 
 export async function GET(request: NextRequest) {
+
+  const startTime = Date.now(); // Capture start time
+
+  const users = await prisma.user.findMany(); // Fetch data
+
+  const endTime = Date.now(); // Capture end time
+  console.log(`API Execution Time: ${endTime - startTime} ms`); // Log execution
+
+  return NextResponse.json(users);
+
   try {
     const { searchParams } = request.nextUrl;
     const userId = searchParams.get('id'); // Get the user ID from query parameters
