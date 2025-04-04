@@ -4,7 +4,25 @@ import { updateUserSchema } from '../../../lib/utils/validators';
 
 export async function GET(request: NextRequest) {
   try {
-    // Fetch all users directly using Prisma
+    const { searchParams } = request.nextUrl;
+    const userId = searchParams.get('id'); // Get the user ID from query parameters
+
+    if (userId) {
+      // Fetch a specific user by ID
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+
+      // Exclude the password from the response
+      const { password, ...userWithoutPassword } = user;
+      return NextResponse.json(userWithoutPassword);
+    }
+
+    // If no ID is provided, fetch all users
     const users = await prisma.user.findMany();
 
     if (!users.length) {
@@ -26,12 +44,14 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const body = await request.json();
+    const { id: userId, ...data } = body; // Extract user ID from the request body
 
-    // Use a hardcoded user ID for testing
-    const userId = 'dummy-user-id'; // Replace with a hardcoded value or mock logic for testing
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
 
     // Validate request body
-    const result = updateUserSchema.safeParse(body);
+    const result = updateUserSchema.safeParse(data);
     if (!result.success) {
       return NextResponse.json(
         { error: 'Validation error', details: result.error.errors },
