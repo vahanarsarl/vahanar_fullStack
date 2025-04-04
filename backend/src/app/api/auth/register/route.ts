@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthService } from '../../../../services/authService';
+import { prisma } from '../../../../lib/db/prisma'; // Import Prisma client
 import { registerUserSchema } from '../../../../lib/utils/validators';
 
 export async function POST(request: NextRequest) {
@@ -11,6 +12,18 @@ export async function POST(request: NextRequest) {
     if (!result.success) {
       return NextResponse.json(
         { error: 'Validation error', details: result.error.errors },
+        { status: 400 }
+      );
+    }
+
+    // Check if phone number already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { phoneNumber: result.data.phoneNumber },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'Phone number already in use' },
         { status: 400 }
       );
     }
