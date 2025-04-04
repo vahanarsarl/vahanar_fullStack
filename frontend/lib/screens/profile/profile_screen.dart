@@ -1,81 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vahanar_front/models/user_model.dart'; // Import the User model
 import 'package:vahanar_front/providers/auth_provider.dart';
+import 'package:vahanar_front/services/user_service.dart';
 import 'package:vahanar_front/widgets/bottom_nav_bar.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool isLoading = true;
+  User? user; // Change the type to User? instead of Map<String, dynamic>?
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUsers();
+  }
+
+  // Fetch user data from the backend
+  void fetchUsers() async {
+    try {
+      final fetchedUser = await UserService().getUserProfile(); // Assuming this returns a User object
+      setState(() {
+        user = fetchedUser; // Assign the User object directly
+        isLoading = false;
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error: $error");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-                child: Column(
-                  children: [
-                    _buildOptionTile(
-                      icon: Icons.credit_card,
-                      title: 'Driving licence',
-                      onTap: () {
-                        Navigator.pushNamed(context, '/driving_licence');
-                      },
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  _buildHeader(context),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                      child: Column(
+                        children: [
+                          _buildOptionTile(
+                            icon: Icons.credit_card,
+                            title: 'Driving licence',
+                            onTap: () {
+                              Navigator.pushNamed(context, '/driving_licence');
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          _buildOptionTile(
+                            icon: Icons.help_outline,
+                            title: 'Help center',
+                            onTap: () {
+                              Navigator.pushNamed(context, '/help_center');
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          _buildOptionTile(
+                            icon: Icons.calendar_today,
+                            title: 'My reservations',
+                            onTap: () {
+                              Navigator.pushNamed(context, '/my_reservations');
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          _buildOptionTile(
+                            icon: Icons.lock,
+                            title: 'General conditions',
+                            onTap: () {
+                              Navigator.pushNamed(context, '/general_conditions');
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          _buildOptionTile(
+                            icon: Icons.logout,
+                            title: 'Log out',
+                            onTap: () async {
+                              await Provider.of<AuthProvider>(context, listen: false).logout();
+                              Navigator.pushReplacementNamed(context, '/sign_in');
+                            },
+                          ),
+                          const Spacer(),
+                          _buildFooter(),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 20),
-                    _buildOptionTile(
-                      icon: Icons.help_outline,
-                      title: 'Help center',
-                      onTap: () {
-                        Navigator.pushNamed(context, '/help_center');
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    _buildOptionTile(
-                      icon: Icons.calendar_today,
-                      title: 'My reservations',
-                      onTap: () {
-                        Navigator.pushNamed(context, '/my_reservations'); // Navigation vers ReservationsHistoryScreen
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    _buildOptionTile(
-                      icon: Icons.lock,
-                      title: 'General conditions',
-                      onTap: () {
-                        Navigator.pushNamed(context, '/general_conditions');
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    _buildOptionTile(
-                      icon: Icons.logout,
-                      title: 'Log out',
-                      onTap: () async {
-                        await Provider.of<AuthProvider>(context, listen: false).logout();
-                        Navigator.pushReplacementNamed(context, '/sign_in');
-                      },
-                    ),
-                    const Spacer(),
-                    _buildFooter(),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
       bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final user = authProvider.user;
-    final fullName = user != null ? '${user.firstName} ${user.lastName}' : 'John Doe';
+    final fullName = user != null ? '${user!.firstName} ${user!.lastName}' : 'John Doe';
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),

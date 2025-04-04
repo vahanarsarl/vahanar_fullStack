@@ -11,9 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
-  go_router: ^14.8.1  # Ajout pour la navigation avancée
-  pin_code_fields: ^8.0.1  # Ajout pour les champs de code PIN
-  http: ^1.3.0 # Ajout pour les requêtes HTTP
+  go_router: ^14.8.1 
+  pin_code_fields: ^8.0.1  
+  http: ^1.3.0 
   flutter_secure_storage: ^9.2.4
   provider: ^6.1.2
   carousel_slider: ^5.0.0
