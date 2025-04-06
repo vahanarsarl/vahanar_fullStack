@@ -1,24 +1,29 @@
-// lib/widgets/custom_button.dart
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
-  final Color color;
+  final Color? color; // Couleur de fond (peut être nulle pour un fond transparent)
+  final Color? textColor; // Couleur du texte (peut être définie séparément)
+  final BorderSide? borderSide; // Bordure (peut être nulle pour pas de bordure)
   final double width;
   final double height;
   final BorderRadius? borderRadius;
   final TextStyle? textStyle;
+  final bool isLoading;
 
   const CustomButton({
     super.key,
     required this.text,
     required this.onPressed,
-    this.color = Colors.blue,
+    this.color,
+    this.textColor = Colors.white, // Couleur du texte par défaut : blanc
+    this.borderSide,
     this.width = double.infinity,
     this.height = 50.0,
     this.borderRadius,
-    this.textStyle, required isLoading,
+    this.textStyle,
+    this.isLoading = false,
   });
 
   @override
@@ -27,21 +32,25 @@ class CustomButton extends StatelessWidget {
       width: width,
       height: height,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed, // Désactiver le bouton pendant le chargement
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
+          backgroundColor: color, // Utiliser la couleur de fond définie
           shape: RoundedRectangleBorder(
             borderRadius: borderRadius ?? BorderRadius.circular(8),
+            side: borderSide ?? BorderSide.none, // Utiliser la bordure définie
           ),
         ),
-        child: Text(
-          text,
-          style: textStyle ?? TextStyle(
-            fontFamily: 'LeagueSpartan',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+        child: isLoading
+            ? const CircularProgressIndicator(color: Colors.white) // Afficher un indicateur de chargement
+            : Text(
+                text,
+                style: textStyle ??
+                    TextStyle(
+                      fontFamily: 'LeagueSpartan',
+                      fontWeight: FontWeight.bold,
+                      color: textColor, // Utiliser la couleur du texte définie
+                    ),
+              ),
       ),
     );
   }

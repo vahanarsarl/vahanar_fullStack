@@ -5,7 +5,7 @@ class CarouselAnimation extends StatefulWidget {
   final List<Widget> items;
   final Function(int)? onPageChanged; // Callback pour suivre l'index
 
-  const CarouselAnimation({required this.items, this.onPageChanged, Key? key}) : super(key: key);
+  const CarouselAnimation({required this.items, this.onPageChanged, super.key});
 
   @override
   _CarouselAnimationState createState() => _CarouselAnimationState();

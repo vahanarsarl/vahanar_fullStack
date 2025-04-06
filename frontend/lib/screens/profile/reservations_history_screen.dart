@@ -1,55 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Ajout de FlutterScreenUtil
+import 'package:google_fonts/google_fonts.dart'; // Ajout de GoogleFonts pour Poppins
 import 'package:vahanar_front/widgets/bottom_nav_bar.dart';
 
 class ReservationsHistoryScreen extends StatelessWidget {
-  const ReservationsHistoryScreen({Key? key}) : super(key: key); // Ajout de Key? key
+  const ReservationsHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Fond blanc
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header avec flèche de retour et titre
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              color: const Color(0xFF2A4D50), // Couleur verte foncée du header
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              color: const Color(0xFF2A4D50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          Navigator.pop(context); // Retour à la page précédente
-                        },
+                        icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
+                        onPressed: () => Navigator.pop(context),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
-                      const Text(
-                        'RESERVATIONS',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontFamily: 'LeagueSpartan-Bold',
-                          decoration: TextDecoration.underline,
-                          decorationColor: Colors.white,
-                        ),
-                      ),
-                      // Suppression de l'IconButton du menu
-                      const SizedBox(width: 48), //Pour aligner le titre au centre
                     ],
                   ),
-                  const Text(
-                    'HISTORY',
-                    style: TextStyle(
-                      fontSize: 24,
+                  Text(
+                    'RESERVATIONS',
+                    style: GoogleFonts.poppins(
+                      fontSize: 32.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      fontFamily: 'LeagueSpartan-Bold',
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    'HISTORY',
+                    style: GoogleFonts.poppins(
+                      fontSize: 24.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.white,
                     ),
                   ),
                 ],
@@ -58,21 +57,20 @@ class ReservationsHistoryScreen extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Titre "Active Orders"
-                      const Text(
+                      Text(
                         'Active Orders',
-                        style: TextStyle(
-                          fontSize: 20,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'LeagueSpartan-Bold',
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 8.0),
+                      SizedBox(height: 8.h),
                       // Liste des commandes actives
                       _buildOrderList(context, [
                         {
@@ -88,18 +86,17 @@ class ReservationsHistoryScreen extends StatelessWidget {
                           'status': 'Confirmed'
                         },
                       ]),
-                      const SizedBox(height: 16.0),
+                      SizedBox(height: 16.h),
                       // Titre "Past Orders"
-                      const Text(
+                      Text(
                         'Past Orders',
-                        style: TextStyle(
-                          fontSize: 20,
+                        style: GoogleFonts.poppins(
+                          fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'LeagueSpartan-Bold',
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 8.0),
+                      SizedBox(height: 8.h),
                       // Liste des commandes passées
                       _buildOrderList(context, [
                         {
@@ -147,7 +144,7 @@ class ReservationsHistoryScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(selectedIndex: 2), // Index 2 pour "My Reservations"
+      bottomNavigationBar: const BottomNavBar(selectedIndex: 2),
     );
   }
 
@@ -155,58 +152,55 @@ class ReservationsHistoryScreen extends StatelessWidget {
   Widget _buildOrderList(BuildContext context, List<Map<String, String>> orders) {
     return Column(
       children: orders.map((order) {
+        final isPickUp = order['type'] == 'Pick-up location';
         return Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(8.r),
           ),
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
+          margin: EdgeInsets.symmetric(vertical: 8.h),
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: EdgeInsets.all(12.w),
             child: Row(
               children: [
-                Icon(
-                  Icons.location_on,
-                  color: const Color(0xFF2A4D50),
-                  size: 30,
+                Image.asset(
+                  isPickUp ? 'assets/icons/anloc.png' : 'assets/icons/neloc.png',
+                  width: 30.w,
+                  height: 30.h,
                 ),
-                const SizedBox(width: 12.0),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         order['location'] ?? 'Location inconnue',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontFamily: 'LeagueSpartan-Light',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16.sp,
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 4.0),
+                      SizedBox(height: 4.h),
                       Text(
                         order['type'] ?? 'Type inconnu',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'LeagueSpartan-Light',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12.sp,
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(height: 4.0),
+                      SizedBox(height: 4.h),
                       Text(
                         'Date: ${order['date'] ?? 'Unknown'}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'LeagueSpartan-Light',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12.sp,
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(height: 4.0),
+                      SizedBox(height: 4.h),
                       Text(
                         'Status: ${order['status'] ?? 'Unknown'}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'LeagueSpartan-Light',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12.sp,
                           color: order['status'] == 'Confirmed' ? Colors.green : Colors.black,
                         ),
                       ),

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:vahanar_front/constants.dart'; // Importation des constants
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Ajout de FlutterScreenUtil
+import 'package:google_fonts/google_fonts.dart'; // Ajout de GoogleFonts pour Poppins
 
 class EmailSentScreen extends StatelessWidget {
-  const EmailSentScreen({Key? key}) : super(key: key);
+  const EmailSentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white, // Fond blanc
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.black, size: 24.w),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -19,66 +21,67 @@ class EmailSentScreen extends StatelessWidget {
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/icons/valide.png', height: 100),
-              const SizedBox(height: 30),
-              const Text(
+              Image.asset(
+                'assets/icons/valide.png',
+                height: 100.h, // Taille responsive
+              ),
+              SizedBox(height: 30.h),
+              Text(
                 "Successful",
-                style: TextStyle(
-                  fontSize: AppConstants.titleSize,
+                style: GoogleFonts.poppins(
+                  fontSize: 28.sp, // Taille agrandie
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'LeagueSpartan',
-                  color: AppConstants.primaryColor,
+                  color: const Color(0xFF2A4D50), // Couleur verte foncée
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
+              SizedBox(height: 20.h),
+              Text(
                 "We have sent you an email to help you change your password, please check your emails app.",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: AppConstants.bodyTextSize,
-                  fontFamily: 'LeagueSpartan',
-                  color: Color(0xFF989898), // Couleur HEX 989898
+                style: GoogleFonts.poppins(
+                  fontSize: 16.sp, // Taille agrandie
+                  color: const Color(0xFF989898),
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10.h),
+              Text(
                 "Did not receive an email?",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xFF004852), // Couleur HEX 004852
-                  fontSize: AppConstants.bodyTextSize,
-                  fontFamily: 'LeagueSpartan',
+                style: GoogleFonts.poppins(
+                  fontSize: 16.sp, // Taille agrandie
+                  color: const Color(0xFF004852),
                 ),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30.h),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
-                    backgroundColor: AppConstants.primaryColor,
+                    backgroundColor: const Color(0xFF2A4D50), // Couleur comme dans ForgotPasswordScreen
                   ),
                   onPressed: () {
-                    Navigator.pop(context); // Redirection vers la page de connexion
+                    // Redirection vers la page d'accueil
+                    Navigator.pushReplacementNamed(context, '/home');
                   },
                   child: Text(
                     "Let's go",
-                    style: TextStyle(
-                      fontSize: AppConstants.subtitleSize,
-                      fontFamily: 'LeagueSpartan',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18.sp, // Taille agrandie
                       color: Colors.white,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
             ],
           ),
         ),

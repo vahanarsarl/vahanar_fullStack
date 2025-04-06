@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:vahanar_front/constants.dart'; // Importation des constants
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  const ForgotPasswordScreen({super.key});
 
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
@@ -10,7 +11,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
-  bool isInvalidEmail = false; // Variable pour gérer l'état de l'email invalide
+  bool isInvalidEmail = false;
 
   void handleSendEmail() {
     String email = _emailController.text.trim();
@@ -27,91 +28,107 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() {
       isInvalidEmail = false;
     });
-    Navigator.pushNamed(context, '/forgot_password/pass_email'); // Correction de la route
+    Navigator.pushNamed(context, '/forgot_password/pass_email');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.black, size: 24.w),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.white,
         elevation: 0,
+        // Titre supprimé de l'AppBar
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-            const Text(
-              "Forgot Password",
-              style: TextStyle(
-                fontSize: AppConstants.titleSize,
+            SizedBox(height: 40.h),
+            Text(
+              "Forget password",
+              style: GoogleFonts.poppins(
+                fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'LeagueSpartan',
-                color: AppConstants.textColor,
+                color: Colors.black,
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "Please enter your email address",
-              style: TextStyle(
-                fontSize: AppConstants.bodyTextSize,
-                fontFamily: 'LeagueSpartan',
-                color: AppConstants.textColor,
+            SizedBox(height: 20.h),
+            Text(
+              "Please enter your email",
+              style: GoogleFonts.poppins(
+                fontSize: 14.sp, // Taille réduite
+                color: Colors.blue, // Couleur changée en bleu
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
-                labelText: "Email",
-                prefixIcon: const Icon(Icons.email),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                hintText: "yourname@gmail.com",
+                hintStyle: GoogleFonts.poppins(
+                  color: Colors.grey,
+                  fontSize: 16.sp,
                 ),
+                prefixIcon: Icon(Icons.email, color: Colors.grey, size: 20.w),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: Colors.grey[300]!, width: 1.w),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: Colors.grey[300]!, width: 1.w),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: Colors.grey[300]!, width: 1.w),
+                ),
+                contentPadding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
               ),
               keyboardType: TextInputType.emailAddress,
-              autofillHints: [AutofillHints.email],
+              autofillHints: const [AutofillHints.email],
+              style: GoogleFonts.poppins(fontSize: 16.sp),
             ),
             if (isInvalidEmail)
-              const Padding(
-                padding: EdgeInsets.only(top: 8.0),
+              Padding(
+                padding: EdgeInsets.only(top: 8.h),
                 child: Text(
                   "Please enter a valid email address.",
-                  style: TextStyle(color: Colors.red, fontSize: 12.0),
+                  style: GoogleFonts.poppins(
+                    color: Colors.red,
+                    fontSize: 12.sp,
+                  ),
                 ),
               ),
-            const SizedBox(height: 20),
+            SizedBox(height: 30.h),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 16.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  backgroundColor: AppConstants.primaryColor,
+                  backgroundColor: const Color(0xFF2A4D50),
                 ),
                 onPressed: handleSendEmail,
                 child: Text(
                   "Send email",
-                  style: TextStyle(
-                    fontSize: AppConstants.subtitleSize,
-                    fontFamily: 'LeagueSpartan',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16.sp,
                     color: Colors.white,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
             ),
-            const Spacer(),
-            const SizedBox(height: 20), // Ajout d'un espacement en bas pour une meilleure disposition
           ],
         ),
       ),

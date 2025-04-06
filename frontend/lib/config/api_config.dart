@@ -1,6 +1,6 @@
 class ApiConfig {
   // Utiliser cette URL pour le développement local avec un émulateur Android
-  static const String baseUrl = 'http://10.0.2.2:3000/api'; // Pour Android emulator
+  static const String baseUrl = 'http://192.168.41.131:3000/api'; // Pour Android emulator
   // static const String baseUrl = 'http://localhost:3000/api'; // Pour iOS simulator
   // static const String baseUrl = 'https://your-backend-url.com/api'; // URL de production
 

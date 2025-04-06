@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:vahanar_front/widgets/app_bar.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Ajout de flutter_screenutil
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:vahanar_front/widgets/custom_button.dart';
-import 'package:vahanar_front/constants.dart'; // Importation des constants
+import 'package:vahanar_front/constants.dart';
+import 'package:vahanar_front/providers/auth_provider.dart';
 
 class CreatePasswordScreen extends StatefulWidget {
   const CreatePasswordScreen({super.key});
@@ -18,144 +21,157 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   bool _isChecked = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: "Create Password",
-        backgroundColor: Colors.white,
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontSize: 14.sp,
+          ),
+        ),
+        backgroundColor: Colors.red,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              "Create Password",
-              style: TextStyle(
-                fontSize: AppConstants.titleSize,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'LeagueSpartan',
-                color: AppConstants.textColor,
+    );
+  }
+
+  Future<void> _handleUpdatePassword(AuthProvider authProvider, bool useBackend) async {
+    if (useBackend) {
+      final success = await authProvider.updatePassword(_passwordController.text.trim());
+
+      if (success) {
+        Navigator.pushNamed(context, '/sign_up/step2');
+      } else {
+        _showError(authProvider.error ?? "Failed to update password");
+      }
+    } else {
+      print('Simulating password update for testing purposes');
+      Navigator.pushNamed(context, '/sign_up/step2');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.h),
+              IconButton(
+                icon: Icon(Icons.arrow_back, color: AppConstants.textColor, size: 24.w),
+                onPressed: () => Navigator.pop(context),
               ),
-            ),
-            const SizedBox(height: 30),
-            _buildPasswordField(
-              controller: _passwordController,
-              hintText: "Create password",
-              isPasswordVisible: _isPasswordVisible,
-              onToggle: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            _buildPasswordField(
-              controller: _confirmPasswordController,
-              hintText: "Confirm password",
-              isPasswordVisible: _isConfirmPasswordVisible,
-              onToggle: () {
-                setState(() {
-                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isChecked = !_isChecked;
-                    });
-                  },
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.grey),
-                      color: _isChecked ? AppConstants.primaryColor : Colors.white,
-                    ),
-                    child: _isChecked
-                        ? const Icon(Icons.check, size: 14, color: Colors.white)
-                        : null,
-                  ),
+              Text(
+                "Create Password",
+                style: GoogleFonts.poppins(
+                  fontSize: AppConstants.titleSize.sp ?? 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppConstants.textColor,
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      text: "By tapping on Checking this button, you agree to the ",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontFamily: 'LeagueSpartan',
-                        fontWeight: FontWeight.w400,
+              ),
+              SizedBox(height: 30.h),
+              _buildPasswordField(
+                controller: _passwordController,
+                hintText: "Create password",
+                isVisible: _isPasswordVisible,
+                onToggle: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+              ),
+              SizedBox(height: 20.h),
+              _buildPasswordField(
+                controller: _confirmPasswordController,
+                hintText: "Confirm password",
+                isVisible: _isConfirmPasswordVisible,
+                onToggle: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => setState(() => _isChecked = !_isChecked),
+                    child: Container(
+                      width: 20.w,
+                      height: 20.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.grey),
+                        color: _isChecked ? AppConstants.primaryColor : Colors.white,
                       ),
-                      children: [
-                        TextSpan(
-                          text: "Terms of Service",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'LeagueSpartan',
-                          ),
-                        ),
-                        const TextSpan(text: " and "),
-                        TextSpan(
-                          text: "privacy policy",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'LeagueSpartan',
-                          ),
-                        ),
-                        const TextSpan(text: "."),
-                      ],
+                      child: _isChecked
+                          ? Icon(Icons.check, size: 14.w, color: Colors.white)
+                          : null,
                     ),
                   ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        text: "By tapping on Checking this button, you agree to the ",
+                        style: GoogleFonts.poppins(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14.sp,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: "Mahana Terms of Service",
+                            style: GoogleFonts.poppins(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          const TextSpan(text: " and "),
+                          TextSpan(
+                            text: "privacy policy",
+                            style: GoogleFonts.poppins(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          const TextSpan(text: "."),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              CustomButton(
+                text: "Sign Up",
+                onPressed: () => _handleUpdatePassword(authProvider, false),
+                color: AppConstants.primaryColor,
+                textColor: Colors.white,
+                width: double.infinity,
+                height: 50.h,
+                isLoading: authProvider.isLoading,
+                textStyle: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.sp,
+                  color: Colors.white,
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            CustomButton(
-              text: "Sign Up",
-              onPressed: () {
-                if (!_isChecked) return; // Vérifie si l'utilisateur a accepté les conditions
-
-                String password = _passwordController.text.trim();
-                String confirmPassword = _confirmPasswordController.text.trim();
-
-                if (password.isEmpty || confirmPassword.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please fill all fields"),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-
-                if (password != confirmPassword) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Passwords do not match"),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                  return;
-                }
-
-                // Si tout est bon, on passe à la prochaine étape
-                Navigator.pushNamed(context, '/sign_up/step2');
-              },
-              color: AppConstants.primaryColor,
-              width: double.infinity,
-              height: 50, isLoading: null,
-            ),
-            const SizedBox(height: 40),
-          ],
+              ),
+              SizedBox(height: 40.h),
+            ],
+          ),
         ),
       ),
     );
@@ -164,28 +180,30 @@ class _CreatePasswordScreenState extends State<CreatePasswordScreen> {
   Widget _buildPasswordField({
     required TextEditingController controller,
     required String hintText,
-    required bool isPasswordVisible,
+    required bool isVisible,
     required VoidCallback onToggle,
   }) {
     return TextField(
       controller: controller,
-      obscureText: !isPasswordVisible,
+      obscureText: !isVisible,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(
-          fontFamily: 'LeagueSpartan',
+        hintStyle: GoogleFonts.poppins(
           fontWeight: FontWeight.w400,
+          color: Colors.grey,
+          fontSize: 16.sp,
         ),
         filled: true,
-        fillColor: Colors.grey.shade200,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.r),
           borderSide: BorderSide.none,
         ),
         suffixIcon: IconButton(
           icon: Icon(
-            isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+            isVisible ? Icons.visibility : Icons.visibility_off,
             color: Colors.grey,
+            size: 24.w,
           ),
           onPressed: onToggle,
         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Pour parser les dates
-import 'package:vahanar_front/constants.dart'; // Import des constantes
-import 'package:vahanar_front/theme.dart'; // Import du thème
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart'; // Pour utiliser Poppins
 import 'package:vahanar_front/screens/home/conditions_popup.dart'; // Importer le widget ConditionsPopup
 
 // Définition de la classe Vehicle pour représenter une voiture
@@ -18,7 +17,7 @@ class Vehicle {
   final List<String> features;
   final String minDriverAge;
   final String subtitle; // Sous-titre unique
-  final String description; // Description (vide pour que tu puisses la remplir)
+  final String description; // Description longue
 
   Vehicle({
     required this.category,
@@ -71,16 +70,41 @@ class ProductPageScreen extends StatefulWidget {
   _ProductPageScreenState createState() => _ProductPageScreenState();
 }
 
-class _ProductPageScreenState extends State<ProductPageScreen> {
+class _ProductPageScreenState extends State<ProductPageScreen> with SingleTickerProviderStateMixin {
   bool _isExpanded = false; // État pour gérer l'affichage de la description complète
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
 
-  // Liste statique des 100 voitures avec sous-titres et descriptions vides
+  @override
+  void initState() {
+    super.initState();
+    // Initialisation de l'animation pour la pop-up de partage
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1), // Commence en bas
+      end: const Offset(0, 0), // Monte jusqu'à la position finale
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  // Liste statique des 10 voitures avec sous-titres et descriptions longues
   static final List<Vehicle> allVehicles = [
-    // SUV (20 voitures)
+    // SUV (5 voitures)
     Vehicle(
       category: 'SUV',
       name: 'Toyota RAV4',
-      imageUrl: 'assets/images/toyota_rav4.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 3,
@@ -90,12 +114,13 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Automatic transmission', 'Air conditioning', 'GPS', 'Bluetooth'],
       minDriverAge: '23',
       subtitle: 'compact family SUV',
-      description: '', // Case vide pour ton texte
+      description:
+          'Le Toyota RAV4 est un SUV compact idéal pour les familles, offrant un espace généreux et un confort optimal. Il est équipé d’une transmission automatique fluide et d’un système de navigation GPS intégré. Parfait pour les trajets urbains ou les escapades en plein air, ce véhicule combine fiabilité et efficacité énergétique. Louez-le pour une expérience de conduite agréable et sécurisée.',
     ),
     Vehicle(
       category: 'SUV',
       name: 'Jeep Wrangler',
-      imageUrl: 'assets/images/jeep_wrangler.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 4,
       luggage: 2,
@@ -105,12 +130,13 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Manual transmission', 'Sunroof'],
       minDriverAge: '23',
       subtitle: 'full-size adventure SUV',
-      description: '', // Case vide pour ton texte
+      description:
+          'Le Jeep Wrangler est conçu pour les amateurs d’aventure, avec une capacité tout-terrain exceptionnelle. Son toit ouvrant et sa transmission manuelle offrent une expérience de conduite unique. Ce SUV robuste est parfait pour explorer des terrains difficiles tout en restant confortable. Idéal pour les aventuriers en quête de liberté et de sensations fortes.',
     ),
     Vehicle(
       category: 'SUV',
       name: 'Ford Escape',
-      imageUrl: 'assets/images/ford_escape.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 3,
@@ -120,12 +146,13 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
       minDriverAge: '22',
       subtitle: 'mid-size practical SUV',
-      description: '', // Case vide pour ton texte
+      description:
+          'Le Ford Escape est un SUV pratique et polyvalent, parfait pour les trajets quotidiens ou les voyages en famille. Il offre une transmission automatique et une climatisation efficace pour un confort optimal. Avec son design moderne et ses fonctionnalités Bluetooth, il répond aux besoins des conducteurs connectés. Un choix idéal pour une conduite sans stress.',
     ),
     Vehicle(
       category: 'SUV',
       name: 'Honda CR-V',
-      imageUrl: 'assets/images/honda_crv.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 3,
@@ -135,12 +162,13 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Automatic transmission', 'GPS', 'Heated seats'],
       minDriverAge: '24',
       subtitle: 'versatile family SUV',
-      description: '', // Case vide pour ton texte
+      description:
+          'Le Honda CR-V est un SUV familial polyvalent, connu pour son espace intérieur et son confort. Il est équipé d’une transmission automatique, d’un GPS et de sièges chauffants pour une expérience premium. Ce véhicule est parfait pour les longs trajets ou les aventures en famille. Louez-le pour une conduite fiable et agréable.',
     ),
     Vehicle(
       category: 'SUV',
       name: 'Subaru Forester',
-      imageUrl: 'assets/images/subaru_forester.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 3,
@@ -150,238 +178,14 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Automatic transmission', 'Air conditioning', 'Sunroof'],
       minDriverAge: '23',
       subtitle: 'rugged outdoor SUV',
-      description: '', // Case vide pour ton texte
+      description:
+          'Le Subaru Forester est un SUV robuste conçu pour les amateurs de plein air, avec une excellente capacité tout-terrain. Il dispose d’une transmission automatique, d’une climatisation et d’un toit ouvrant pour plus de plaisir. Idéal pour les escapades en nature, ce véhicule offre une conduite stable et sécurisée. Parfait pour les aventures en plein air.',
     ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Chevrolet Traverse',
-      imageUrl: 'assets/images/chevrolet_traverse.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2100/day',
-      estimatedTotal: 'MAD 4200 est. total',
-      features: ['Automatic transmission', 'GPS', 'Bluetooth'],
-      minDriverAge: '24',
-      subtitle: 'spacious family SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Kia Sorento',
-      imageUrl: 'assets/images/kia_sorento.png',
-      doors: 4,
-      passengers: 6,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1950/day',
-      estimatedTotal: 'MAD 3900 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Heated seats'],
-      minDriverAge: '23',
-      subtitle: 'modern mid-size SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Hyundai Tucson',
-      imageUrl: 'assets/images/hyundai_tucson.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1650/day',
-      estimatedTotal: 'MAD 3300 est. total',
-      features: ['Automatic transmission', 'Bluetooth', 'Sunroof'],
-      minDriverAge: '22',
-      subtitle: 'stylish compact SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Mazda CX-5',
-      imageUrl: 'assets/images/mazda_cx5.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1800/day',
-      estimatedTotal: 'MAD 3600 est. total',
-      features: ['Automatic transmission', 'GPS', 'Air conditioning'],
-      minDriverAge: '23',
-      subtitle: 'sporty mid-size SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Volkswagen Tiguan',
-      imageUrl: 'assets/images/vw_tiguan.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1900/day',
-      estimatedTotal: 'MAD 3800 est. total',
-      features: ['Automatic transmission', 'Heated seats', 'Bluetooth'],
-      minDriverAge: '24',
-      subtitle: 'elegant family SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Nissan X-Trail',
-      imageUrl: 'assets/images/nissan_xtrail.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1750/day',
-      estimatedTotal: 'MAD 3500 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '23',
-      subtitle: 'versatile adventure SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Audi Q5',
-      imageUrl: 'assets/images/audi_q5.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'luxury mid-size SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'BMW X3',
-      imageUrl: 'assets/images/bmw_x3.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2600/day',
-      estimatedTotal: 'MAD 5200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'premium sporty SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Mercedes GLC',
-      imageUrl: 'assets/images/mercedes_glc.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2700/day',
-      estimatedTotal: 'MAD 5400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'elegant luxury SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Lexus RX',
-      imageUrl: 'assets/images/lexus_rx.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2800/day',
-      estimatedTotal: 'MAD 5600 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'refined mid-size SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Porsche Cayenne',
-      imageUrl: 'assets/images/porsche_cayenne.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 3200/day',
-      estimatedTotal: 'MAD 6400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'high-performance SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Land Rover Discovery',
-      imageUrl: 'assets/images/landrover_discovery.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 3000/day',
-      estimatedTotal: 'MAD 6000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'luxury off-road SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Mitsubishi Outlander',
-      imageUrl: 'assets/images/mitsubishi_outlander.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2000/day',
-      estimatedTotal: 'MAD 4000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '24',
-      subtitle: 'spacious mid-size SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'Dodge Durango',
-      imageUrl: 'assets/images/dodge_durango.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2200/day',
-      estimatedTotal: 'MAD 4400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '24',
-      subtitle: 'powerful family SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'SUV',
-      name: 'GMC Acadia',
-      imageUrl: 'assets/images/gmc_acadia.png',
-      doors: 4,
-      passengers: 6,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2100/day',
-      estimatedTotal: 'MAD 4200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '24',
-      subtitle: 'versatile mid-size SUV',
-      description: '', // Case vide pour ton texte
-    ),
-    // Hatchback (15 voitures)
+    // Hatchback (3 voitures)
     Vehicle(
       category: 'Hatchback',
       name: 'Volkswagen Golf',
-      imageUrl: 'assets/images/vw_golf.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 2,
@@ -391,12 +195,13 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Manual transmission', 'Air conditioning', 'Bluetooth'],
       minDriverAge: '21',
       subtitle: 'compact city hatchback',
-      description: '', // Case vide pour ton texte
+      description:
+          'La Volkswagen Golf est une hatchback compacte parfaite pour la conduite en ville, avec une maniabilité exceptionnelle. Elle est équipée d’une transmission manuelle, d’une climatisation et de la connectivité Bluetooth. Ce véhicule est idéal pour les trajets urbains grâce à sa taille compacte et son efficacité. Louez-la pour une expérience de conduite pratique et économique.',
     ),
     Vehicle(
       category: 'Hatchback',
       name: 'Honda Civic Hatchback',
-      imageUrl: 'assets/images/honda_civic_hatchback.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 2,
@@ -406,12 +211,13 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
       minDriverAge: '22',
       subtitle: 'sporty urban hatchback',
-      description: '', // Case vide pour ton texte
+      description:
+          'La Honda Civic Hatchback combine un design sportif avec une praticité urbaine, idéale pour les jeunes conducteurs. Elle offre une transmission automatique, une climatisation et une connectivité Bluetooth pour un confort moderne. Ce véhicule est parfait pour ceux qui recherchent style et performance en ville. Une option idéale pour une conduite dynamique et connectée.',
     ),
     Vehicle(
       category: 'Hatchback',
       name: 'Ford Focus',
-      imageUrl: 'assets/images/ford_focus.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 2,
@@ -421,193 +227,14 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Manual transmission', 'Air conditioning'],
       minDriverAge: '21',
       subtitle: 'economical hatchback',
-      description: '', // Case vide pour ton texte
+      description:
+          'La Ford Focus est une hatchback économique, parfaite pour les petits budgets et les trajets en ville. Elle est équipée d’une transmission manuelle et d’une climatisation pour un confort de base. Ce véhicule offre une conduite simple et efficace, idéale pour les déplacements quotidiens. Louez-la pour une solution pratique et abordable.',
     ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Toyota Corolla Hatchback',
-      imageUrl: 'assets/images/toyota_corolla_hatchback.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1250/day',
-      estimatedTotal: 'MAD 2500 est. total',
-      features: ['Automatic transmission', 'Bluetooth', 'Air conditioning'],
-      minDriverAge: '22',
-      subtitle: 'reliable city hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Hyundai i30',
-      imageUrl: 'assets/images/hyundai_i30.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1150/day',
-      estimatedTotal: 'MAD 2300 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '21',
-      subtitle: 'modern compact hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Kia Rio',
-      imageUrl: 'assets/images/kia_rio.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1200/day',
-      estimatedTotal: 'MAD 2400 est. total',
-      features: ['Automatic transmission', 'Bluetooth'],
-      minDriverAge: '22',
-      subtitle: 'stylish urban hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Mazda 3 Hatchback',
-      imageUrl: 'assets/images/mazda3_hatchback.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1350/day',
-      estimatedTotal: 'MAD 2700 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '23',
-      subtitle: 'premium compact hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Peugeot 208',
-      imageUrl: 'assets/images/peugeot_208.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1100/day',
-      estimatedTotal: 'MAD 2200 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '21',
-      subtitle: 'chic city hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Renault Clio',
-      imageUrl: 'assets/images/renault_clio.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1050/day',
-      estimatedTotal: 'MAD 2100 est. total',
-      features: ['Manual transmission', 'Bluetooth'],
-      minDriverAge: '21',
-      subtitle: 'versatile urban hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Seat Ibiza',
-      imageUrl: 'assets/images/seat_ibiza.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1000/day',
-      estimatedTotal: 'MAD 2000 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '21',
-      subtitle: 'dynamic compact hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Fiat 500',
-      imageUrl: 'assets/images/fiat_500.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1100/day',
-      estimatedTotal: 'MAD 2200 est. total',
-      features: ['Automatic transmission', 'Bluetooth'],
-      minDriverAge: '22',
-      subtitle: 'retro city hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Mini Cooper',
-      imageUrl: 'assets/images/mini_cooper.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1500/day',
-      estimatedTotal: 'MAD 3000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '23',
-      subtitle: 'iconic sporty hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Citroen C3',
-      imageUrl: 'assets/images/citroen_c3.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1050/day',
-      estimatedTotal: 'MAD 2100 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '21',
-      subtitle: 'trendy urban hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Opel Corsa',
-      imageUrl: 'assets/images/opel_corsa.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1000/day',
-      estimatedTotal: 'MAD 2000 est. total',
-      features: ['Manual transmission', 'Bluetooth'],
-      minDriverAge: '21',
-      subtitle: 'practical city hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Hatchback',
-      name: 'Skoda Fabia',
-      imageUrl: 'assets/images/skoda_fabia.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1000/day',
-      estimatedTotal: 'MAD 2000 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '21',
-      subtitle: 'affordable compact hatchback',
-      description: '', // Case vide pour ton texte
-    ),
-    // Crossover (15 voitures)
+    // Crossover (2 voitures)
     Vehicle(
       category: 'Crossover',
       name: 'Nissan Rogue',
-      imageUrl: 'assets/images/nissan_rogue.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 3,
@@ -617,12 +244,13 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Automatic transmission', 'GPS', 'Sunroof'],
       minDriverAge: '24',
       subtitle: 'mid-size crossover SUV',
-      description: '', // Case vide pour ton texte
+      description:
+          'Le Nissan Rogue est un crossover de taille moyenne, parfait pour les familles ou les longs trajets. Il est équipé d’une transmission automatique, d’un GPS et d’un toit ouvrant pour une expérience de conduite agréable. Ce véhicule offre un bon équilibre entre confort et fonctionnalité, idéal pour les voyages. Louez-le pour une conduite polyvalente et confortable.',
     ),
     Vehicle(
       category: 'Crossover',
       name: 'Toyota C-HR',
-      imageUrl: 'assets/images/toyota_chr.png',
+      imageUrl: 'assets/images/touareg.png',
       doors: 4,
       passengers: 5,
       luggage: 2,
@@ -632,970 +260,10 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
       minDriverAge: '23',
       subtitle: 'stylish compact crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Honda HR-V',
-      imageUrl: 'assets/images/honda_hrv.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1450/day',
-      estimatedTotal: 'MAD 2900 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '22',
-      subtitle: 'versatile urban crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Kia Sportage',
-      imageUrl: 'assets/images/kia_sportage.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1650/day',
-      estimatedTotal: 'MAD 3300 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '23',
-      subtitle: 'modern mid-size crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Hyundai Kona',
-      imageUrl: 'assets/images/hyundai_kona.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1400/day',
-      estimatedTotal: 'MAD 2800 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '22',
-      subtitle: 'compact trendy crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Mazda CX-30',
-      imageUrl: 'assets/images/mazda_cx30.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1550/day',
-      estimatedTotal: 'MAD 3100 est. total',
-      features: ['Automatic transmission', 'GPS', 'Air conditioning'],
-      minDriverAge: '23',
-      subtitle: 'sporty compact crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Subaru Crosstrek',
-      imageUrl: 'assets/images/subaru_crosstrek.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1350/day',
-      estimatedTotal: 'MAD 2700 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '22',
-      subtitle: 'rugged compact crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Volkswagen Taos',
-      imageUrl: 'assets/images/vw_taos.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1500/day',
-      estimatedTotal: 'MAD 3000 est. total',
-      features: ['Automatic transmission', 'Bluetooth', 'Air conditioning'],
-      minDriverAge: '23',
-      subtitle: 'elegant urban crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Chevrolet Equinox',
-      imageUrl: 'assets/images/chevrolet_equinox.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1600/day',
-      estimatedTotal: 'MAD 3200 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '24',
-      subtitle: 'practical mid-size crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Ford Bronco Sport',
-      imageUrl: 'assets/images/ford_bronco_sport.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1700/day',
-      estimatedTotal: 'MAD 3400 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '23',
-      subtitle: 'adventurous compact crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Jeep Compass',
-      imageUrl: 'assets/images/jeep_compass.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1550/day',
-      estimatedTotal: 'MAD 3100 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof'],
-      minDriverAge: '23',
-      subtitle: 'off-road capable crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Audi Q3',
-      imageUrl: 'assets/images/audi_q3.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2300/day',
-      estimatedTotal: 'MAD 4600 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'luxury compact crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'BMW X1',
-      imageUrl: 'assets/images/bmw_x1.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2400/day',
-      estimatedTotal: 'MAD 4800 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'premium sporty crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Mercedes GLA',
-      imageUrl: 'assets/images/mercedes_gla.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof'],
-      minDriverAge: '25+',
-      subtitle: 'elegant luxury crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Crossover',
-      name: 'Lexus NX',
-      imageUrl: 'assets/images/lexus_nx.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2600/day',
-      estimatedTotal: 'MAD 5200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'refined compact crossover',
-      description: '', // Case vide pour ton texte
-    ),
-    // Sedan (20 voitures)
-    Vehicle(
-      category: 'Sedan',
-      name: 'Honda Accord',
-      imageUrl: 'assets/images/honda_accord.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1400/day',
-      estimatedTotal: 'MAD 2800 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Heated seats'],
-      minDriverAge: '22',
-      subtitle: 'mid-size family sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Toyota Camry',
-      imageUrl: 'assets/images/toyota_camry.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1450/day',
-      estimatedTotal: 'MAD 2900 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '22',
-      subtitle: 'reliable family sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Nissan Altima',
-      imageUrl: 'assets/images/nissan_altima.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1350/day',
-      estimatedTotal: 'MAD 2700 est. total',
-      features: ['Automatic transmission', 'GPS', 'Air conditioning'],
-      minDriverAge: '22',
-      subtitle: 'comfortable mid-size sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Hyundai Sonata',
-      imageUrl: 'assets/images/hyundai_sonata.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1400/day',
-      estimatedTotal: 'MAD 2800 est. total',
-      features: ['Automatic transmission', 'Bluetooth', 'Heated seats'],
-      minDriverAge: '23',
-      subtitle: 'modern family sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Kia Optima',
-      imageUrl: 'assets/images/kia_optima.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1350/day',
-      estimatedTotal: 'MAD 2700 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '22',
-      subtitle: 'stylish mid-size sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Mazda 6',
-      imageUrl: 'assets/images/mazda6.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1500/day',
-      estimatedTotal: 'MAD 3000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '23',
-      subtitle: 'sporty family sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Volkswagen Passat',
-      imageUrl: 'assets/images/vw_passat.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1550/day',
-      estimatedTotal: 'MAD 3100 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '23',
-      subtitle: 'elegant mid-size sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Ford Fusion',
-      imageUrl: 'assets/images/ford_fusion.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1400/day',
-      estimatedTotal: 'MAD 2800 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '22',
-      subtitle: 'practical family sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Chevrolet Malibu',
-      imageUrl: 'assets/images/chevrolet_malibu.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1350/day',
-      estimatedTotal: 'MAD 2700 est. total',
-      features: ['Automatic transmission', 'GPS', 'Air conditioning'],
-      minDriverAge: '22',
-      subtitle: 'comfortable family sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Subaru Legacy',
-      imageUrl: 'assets/images/subaru_legacy.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 1450/day',
-      estimatedTotal: 'MAD 2900 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '23',
-      subtitle: 'versatile mid-size sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Audi A4',
-      imageUrl: 'assets/images/audi_a4.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2200/day',
-      estimatedTotal: 'MAD 4400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'luxury executive sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'BMW 3 Series',
-      imageUrl: 'assets/images/bmw_3series.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2300/day',
-      estimatedTotal: 'MAD 4600 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'premium sporty sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Mercedes C-Class',
-      imageUrl: 'assets/images/mercedes_cclass.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2400/day',
-      estimatedTotal: 'MAD 4800 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof'],
-      minDriverAge: '25+',
-      subtitle: 'elegant luxury sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Lexus ES',
-      imageUrl: 'assets/images/lexus_es.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'refined executive sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Porsche Panamera',
-      imageUrl: 'assets/images/porsche_panamera.png',
-      doors: 4,
-      passengers: 4,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 3200/day',
-      estimatedTotal: 'MAD 6400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'high-performance sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Tesla Model 3',
-      imageUrl: 'assets/images/tesla_model3.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2800/day',
-      estimatedTotal: 'MAD 5600 est. total',
-      features: ['Automatic transmission', 'GPS', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'electric luxury sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Jaguar XE',
-      imageUrl: 'assets/images/jaguar_xe.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2600/day',
-      estimatedTotal: 'MAD 5200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '25+',
-      subtitle: 'sporty executive sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Alfa Romeo Giulia',
-      imageUrl: 'assets/images/alfa_romeo_giulia.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2700/day',
-      estimatedTotal: 'MAD 5400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'dynamic luxury sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Volvo S60',
-      imageUrl: 'assets/images/volvo_s60.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2300/day',
-      estimatedTotal: 'MAD 4600 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'scandinavian luxury sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Sedan',
-      name: 'Infiniti Q50',
-      imageUrl: 'assets/images/infiniti_q50.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 2,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2200/day',
-      estimatedTotal: 'MAD 4400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof'],
-      minDriverAge: '25+',
-      subtitle: 'sleek executive sedan',
-      description: '', // Case vide pour ton texte
-    ),
-    // Coupe (10 voitures)
-    Vehicle(
-      category: 'Coupe',
-      name: 'BMW 2 Series',
-      imageUrl: 'assets/images/bmw_2series.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 2000/day',
-      estimatedTotal: 'MAD 4000 est. total',
-      features: ['Manual transmission', 'Sunroof', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'sporty luxury coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Audi A5',
-      imageUrl: 'assets/images/audi_a5.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2400/day',
-      estimatedTotal: 'MAD 4800 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'elegant luxury coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Mercedes C-Class Coupe',
-      imageUrl: 'assets/images/mercedes_cclass_coupe.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '25+',
-      subtitle: 'refined sporty coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Porsche 911',
-      imageUrl: 'assets/images/porsche_911.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 3500/day',
-      estimatedTotal: 'MAD 7000 est. total',
-      features: ['Automatic transmission', 'GPS', 'Sunroof', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'iconic high-performance coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Chevrolet Camaro',
-      imageUrl: 'assets/images/chevrolet_camaro.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 2200/day',
-      estimatedTotal: 'MAD 4400 est. total',
-      features: ['Manual transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'classic muscle coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Ford Mustang',
-      imageUrl: 'assets/images/ford_mustang.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 2300/day',
-      estimatedTotal: 'MAD 4600 est. total',
-      features: ['Manual transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'legendary sporty coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Dodge Challenger',
-      imageUrl: 'assets/images/dodge_challenger.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 2400/day',
-      estimatedTotal: 'MAD 4800 est. total',
-      features: ['Manual transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'powerful muscle coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Toyota Supra',
-      imageUrl: 'assets/images/toyota_supra.png',
-      doors: 2,
-      passengers: 2,
-      luggage: 1,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2600/day',
-      estimatedTotal: 'MAD 5200 est. total',
-      features: ['Automatic transmission', 'GPS', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'dynamic sporty coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Nissan 370Z',
-      imageUrl: 'assets/images/nissan_370z.png',
-      doors: 2,
-      passengers: 2,
-      luggage: 1,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 2100/day',
-      estimatedTotal: 'MAD 4200 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '25+',
-      subtitle: 'agile performance coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Coupe',
-      name: 'Lexus RC',
-      imageUrl: 'assets/images/lexus_rc.png',
-      doors: 2,
-      passengers: 4,
-      luggage: 1,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'sleek luxury coupe',
-      description: '', // Case vide pour ton texte
-    ),
-    // Minivan (10 voitures)
-    Vehicle(
-      category: 'Minivan',
-      name: 'Chrysler Pacifica',
-      imageUrl: 'assets/images/chrysler_pacifica.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2200/day',
-      estimatedTotal: 'MAD 4400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '24',
-      subtitle: 'family-friendly minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Honda Odyssey',
-      imageUrl: 'assets/images/honda_odyssey.png',
-      doors: 4,
-      passengers: 8,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2300/day',
-      estimatedTotal: 'MAD 4600 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '24',
-      subtitle: 'spacious family minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Toyota Sienna',
-      imageUrl: 'assets/images/toyota_sienna.png',
-      doors: 4,
-      passengers: 8,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2250/day',
-      estimatedTotal: 'MAD 4500 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '24',
-      subtitle: 'reliable travel minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Kia Carnival',
-      imageUrl: 'assets/images/kia_carnival.png',
-      doors: 4,
-      passengers: 8,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2200/day',
-      estimatedTotal: 'MAD 4400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '24',
-      subtitle: 'modern family minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Dodge Grand Caravan',
-      imageUrl: 'assets/images/dodge_grand_caravan.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2100/day',
-      estimatedTotal: 'MAD 4200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '24',
-      subtitle: 'versatile family van',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Ford Transit Connect',
-      imageUrl: 'assets/images/ford_transit_connect.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2000/day',
-      estimatedTotal: 'MAD 4000 est. total',
-      features: ['Automatic transmission', 'Air conditioning'],
-      minDriverAge: '24',
-      subtitle: 'practical travel minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Mercedes Metris',
-      imageUrl: 'assets/images/mercedes_metris.png',
-      doors: 4,
-      passengers: 8,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'luxury family minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Volkswagen Transporter',
-      imageUrl: 'assets/images/vw_transporter.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 1900/day',
-      estimatedTotal: 'MAD 3800 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '24',
-      subtitle: 'rugged utility minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Nissan Quest',
-      imageUrl: 'assets/images/nissan_quest.png',
-      doors: 4,
-      passengers: 7,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2100/day',
-      estimatedTotal: 'MAD 4200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '24',
-      subtitle: 'comfortable family minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Minivan',
-      name: 'Hyundai Staria',
-      imageUrl: 'assets/images/hyundai_staria.png',
-      doors: 4,
-      passengers: 8,
-      luggage: 4,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2300/day',
-      estimatedTotal: 'MAD 4600 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '24',
-      subtitle: 'futuristic family minivan',
-      description: '', // Case vide pour ton texte
-    ),
-    // Pickup (10 voitures)
-    Vehicle(
-      category: 'Pickup',
-      name: 'Ford F-150',
-      imageUrl: 'assets/images/ford_f150.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'heavy-duty pickup truck',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Chevrolet Silverado',
-      imageUrl: 'assets/images/chevrolet_silverado.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2600/day',
-      estimatedTotal: 'MAD 5200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '25+',
-      subtitle: 'rugged utility pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Ram 1500',
-      imageUrl: 'assets/images/ram_1500.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2700/day',
-      estimatedTotal: 'MAD 5400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'powerful off-road pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Toyota Tacoma',
-      imageUrl: 'assets/images/toyota_tacoma.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2400/day',
-      estimatedTotal: 'MAD 4800 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'versatile mid-size pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Nissan Titan',
-      imageUrl: 'assets/images/nissan_titan.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2500/day',
-      estimatedTotal: 'MAD 5000 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '25+',
-      subtitle: 'durable full-size pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'GMC Sierra',
-      imageUrl: 'assets/images/gmc_sierra.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2600/day',
-      estimatedTotal: 'MAD 5200 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'premium utility pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Jeep Gladiator',
-      imageUrl: 'assets/images/jeep_gladiator.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Manual',
-      pricePerDay: 'MAD 2300/day',
-      estimatedTotal: 'MAD 4600 est. total',
-      features: ['Manual transmission', 'Air conditioning'],
-      minDriverAge: '25+',
-      subtitle: 'adventurous off-road pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Ford Ranger',
-      imageUrl: 'assets/images/ford_ranger.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2200/day',
-      estimatedTotal: 'MAD 4400 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'Bluetooth'],
-      minDriverAge: '25+',
-      subtitle: 'compact rugged pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Chevrolet Colorado',
-      imageUrl: 'assets/images/chevrolet_colorado.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2100/day',
-      estimatedTotal: 'MAD 4200 est. total',
-      features: ['Automatic transmission', 'Air conditioning', 'GPS'],
-      minDriverAge: '25+',
-      subtitle: 'mid-size utility pickup',
-      description: '', // Case vide pour ton texte
-    ),
-    Vehicle(
-      category: 'Pickup',
-      name: 'Toyota Tundra',
-      imageUrl: 'assets/images/toyota_tundra.png',
-      doors: 4,
-      passengers: 5,
-      luggage: 3,
-      transmission: 'Automatic',
-      pricePerDay: 'MAD 2700/day',
-      estimatedTotal: 'MAD 5400 est. total',
-      features: ['Automatic transmission', 'GPS', 'Heated seats'],
-      minDriverAge: '25+',
-      subtitle: 'heavy-duty off-road pickup',
-      description: '', // Case vide pour ton texte
+      description:
+          'Le Toyota C-HR est un crossover compact au design audacieux, parfait pour les conducteurs à la recherche de style. Il dispose d’une transmission automatique, d’une climatisation et de la connectivité Bluetooth pour une conduite moderne. Ce véhicule est idéal pour les trajets en ville ou les petites escapades. Une option élégante pour une expérience de conduite unique.',
     ),
   ];
-
-  // Fonction pour calculer la durée entre deux dates
-  int calculateDuration(String pickupDate, String dropoffDate) {
-    try {
-      final DateFormat formatter = DateFormat('MMM dd');
-      final DateTime pickup = formatter.parse('$pickupDate ${DateTime.now().year}');
-      final DateTime dropoff = formatter.parse('$dropoffDate ${DateTime.now().year}');
-      return dropoff.difference(pickup).inDays;
-    } catch (e) {
-      return 2; // Valeur par défaut si le parsing échoue
-    }
-  }
 
   // Fonction pour trouver la voiture dans la liste et récupérer son sous-titre et sa description
   Vehicle? _findVehicle() {
@@ -1614,12 +282,12 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
         features: [],
         minDriverAge: '21',
         subtitle: 'default vehicle',
-        description: '',
+        description: 'Aucune description disponible pour ce véhicule.',
       ),
     );
   }
 
-  // Fonction pour afficher la pop-up
+  // Fonction pour afficher la pop-up de conditions
   void _showConditionsPopup(BuildContext context) {
     showDialog(
       context: context,
@@ -1631,21 +299,162 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
     );
   }
 
+  // Fonction pour afficher la pop-up de partage
+  void _showSharePopup(BuildContext context) {
+    _animationController.forward(); // Lancer l'animation
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return SlideTransition(
+          position: _slideAnimation,
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.5, // Moitié de la page
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10.r,
+                  offset: Offset(0, -5.h),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                SizedBox(height: 16.h),
+                Container(
+                  width: 40.w,
+                  height: 5.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  'Share this vehicle',
+                  style: GoogleFonts.poppins(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 3,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    mainAxisSpacing: 16.h,
+                    crossAxisSpacing: 16.w,
+                    children: [
+                      _buildShareOption(
+                        iconPath: 'assets/icons/wath.png',
+                        label: 'WhatsApp',
+                        onTap: () {
+                          // Logique pour partager via WhatsApp
+                        },
+                      ),
+                      _buildShareOption(
+                        iconPath: 'assets/icons/facebook.png',
+                        label: 'Facebook',
+                        onTap: () {
+                          // Logique pour partager via Facebook
+                        },
+                      ),
+                      _buildShareOption(
+                        iconPath: 'assets/icons/insta.png',
+                        label: 'Instagram',
+                        onTap: () {
+                          // Logique pour partager via Instagram
+                        },
+                      ),
+                      _buildShareOption(
+                        iconPath: 'assets/icons/mes.png',
+                        label: 'Messenger',
+                        onTap: () {
+                          // Logique pour partager via Messenger
+                        },
+                      ),
+                      _buildShareOption(
+                        iconPath: 'assets/icons/gmail.png',
+                        label: 'Email',
+                        onTap: () {
+                          // Logique pour partager via Email
+                        },
+                      ),
+                      _buildShareOption(
+                        iconPath: 'assets/icons/sms.png',
+                        label: 'SMS',
+                        onTap: () {
+                          // Logique pour partager via SMS
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ).whenComplete(() {
+      _animationController.reverse(); // Revenir à l'état initial
+    });
+  }
+
+  // Widget pour chaque option de partage (avec image au lieu d'icône)
+  Widget _buildShareOption({
+    required String iconPath,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey.shade100,
+              border: Border.all(color: Colors.grey.shade300, width: 2.w),
+            ),
+            child: Image.asset(
+              iconPath,
+              width: 30.w,
+              height: 30.h,
+              fit: BoxFit.contain,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 12.sp,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    int durationDays = calculateDuration(widget.pickupDate, widget.dropoffDate);
-
     // Récupérer la voiture pour obtenir le sous-titre et la description
     final vehicle = _findVehicle();
 
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: Colors.grey.shade200, // Fond gris pour toute la page
       body: SafeArea(
         child: Column(
           children: [
             // En-tête avec le rectangle bleu
-            _buildHeader(screenWidth, durationDays, context),
+            _buildHeader(context),
             // Contenu principal (image, détails, etc.)
             Expanded(
               child: SingleChildScrollView(
@@ -1655,7 +464,7 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                     // Image de la voiture avec fond gris
                     _buildCarImage(),
                     // Détails de la voiture (nom, sous-titre, caractéristiques, description, prix)
-                    _buildCarDetails(context, screenWidth, vehicle!.subtitle, vehicle.description),
+                    _buildCarDetails(context, vehicle!.subtitle, vehicle.description),
                   ],
                 ),
               ),
@@ -1667,10 +476,10 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
   }
 
   // Construit l'en-tête avec le rectangle bleu
-  Widget _buildHeader(double screenWidth, int durationDays, BuildContext context) {
+  Widget _buildHeader(BuildContext context) {
     return Container(
-      width: screenWidth,
-      padding: const EdgeInsets.all(16.0),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       decoration: const BoxDecoration(
         color: Color(0xFF004852),
         borderRadius: BorderRadius.zero,
@@ -1678,33 +487,40 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Ligne avec icônes et titre "REVIEW DETAILS"
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
                 onPressed: () {
                   Navigator.pop(context); // Retour à SearchResultScreen
                 },
               ),
-              Text(
-                'REVIEW DETAILS',
-                style: AppTheme.lightTheme.textTheme.headlineLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'LeagueSpartan-Bold',
-                ),
-              ),
               IconButton(
-                icon: const Icon(Icons.share, color: Colors.white),
+                icon: Icon(Icons.share, color: Colors.white, size: 24.w),
                 onPressed: () {
-                  // Logique de partage (non implémentée ici)
+                  _showSharePopup(context); // Afficher la pop-up de partage
                 },
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'REVIEW DETAILS',
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24.sp,
+                  decoration: TextDecoration.underline, // Soulignement avec TextDecoration
+                  decorationColor: Colors.white, // Couleur de la ligne (blanche)
+                  decorationThickness: 2, // Épaisseur de la ligne
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
         ],
       ),
     );
@@ -1715,75 +531,72 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
     return Container(
       color: Colors.grey.shade300, // Fond gris uniquement pour l'image
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: EdgeInsets.symmetric(vertical: 20.h),
       child: Image.asset(
         widget.imageUrl,
-        width: 300,
-        height: 200,
+        width: 300.w,
+        height: 200.h,
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
-          return const Icon(Icons.directions_car, size: 120, color: Colors.black54);
+          return Icon(Icons.directions_car, size: 120.w, color: Colors.black54);
         },
       ),
     );
   }
 
   // Construit les détails de la voiture (nom, sous-titre, caractéristiques, description, prix)
-  Widget _buildCarDetails(BuildContext context, double screenWidth, String subtitle, String description) {
+  Widget _buildCarDetails(BuildContext context, String subtitle, String description) {
     return Container(
-      color: Colors.white, // Fond blanc pour le reste de la page
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      color: Colors.grey.shade200, // Fond gris pour le reste de la page
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Nom et sous-titre de la voiture
           Text(
             widget.name,
-            style: const TextStyle(
-              fontSize: 20,
+            style: GoogleFonts.poppins(
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black,
-              fontFamily: 'LeagueSpartan-Bold',
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4.h),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 16,
+            style: GoogleFonts.poppins(
+              fontSize: 14.sp,
               color: Colors.grey.shade600,
-              fontFamily: 'LeagueSpartan-Light',
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           // Caractéristiques (transmission, sièges, portes, bagages)
-          _buildFeatureRow(Icons.settings, 'Automatic transmission', widget.transmission),
+          _buildFeatureRow('assets/icons/de1.png', '${widget.transmission} Transmission', ''), // Transmission combinée dans le label
           _buildDivider(),
-          _buildFeatureRow(Icons.person, 'Seats', widget.passengers.toString()),
+          _buildFeatureRow('assets/icons/de2.png', 'Seats', widget.passengers.toString()),
           _buildDivider(),
-          _buildFeatureRow(Icons.door_back_door_outlined, 'Doors', widget.doors.toString()),
+          _buildFeatureRow('assets/icons/de3.png', 'Doors', widget.doors.toString()),
           _buildDivider(),
-          _buildFeatureRow(Icons.luggage, 'Luggage', widget.luggage.toString()),
-          const SizedBox(height: 20),
+          _buildFeatureRow('assets/icons/de4.png', 'Luggage', widget.luggage.toString()),
+          _buildDivider(), // Ligne supplémentaire après la dernière icône
+          SizedBox(height: 20.h),
           // Description
-          const Text(
+          Text(
             'Car description',
-            style: TextStyle(
-              fontSize: 18,
+            style: GoogleFonts.poppins(
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black,
-              fontFamily: 'LeagueSpartan-SemiBold',
             ),
           ),
-          const SizedBox(height: 8),
-          // Affichage de la description avec "Read more..." après 4 lignes
+          SizedBox(height: 8.h),
+          // Affichage de la description avec "Read more..." après 2 lignes
           description.isEmpty
-              ? const Text(
-                  'No description available.',
-                  style: TextStyle(
-                    fontSize: 14,
+              ? Text(
+                  'Aucune description disponible.',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14.sp,
                     color: Colors.black87,
-                    fontFamily: 'LeagueSpartan-Light',
                   ),
                 )
               : Column(
@@ -1792,46 +605,36 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                     _isExpanded
                         ? Text(
                             description,
-                            style: const TextStyle(
-                              fontSize: 14,
+                            style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
                               color: Colors.black87,
-                              fontFamily: 'LeagueSpartan-Light',
                             ),
                           )
-                        : RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: description,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black87,
-                                    fontFamily: 'LeagueSpartan-Light',
-                                  ),
-                                ),
-                                WidgetSpan(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _isExpanded = true; // Affiche la description complète
-                                      });
-                                    },
-                                    child: const Text(
-                                      ' Read more...',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.blue,
-                                        decoration: TextDecoration.underline,
-                                        fontFamily: 'LeagueSpartan-Light',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                        : Text(
+                            description,
+                            style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
+                              color: Colors.black87,
                             ),
-                            maxLines: 4,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                    if (!_isExpanded)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isExpanded = true; // Affiche la description complète
+                          });
+                        },
+                        child: Text(
+                          'Read more...',
+                          style: GoogleFonts.poppins(
+                            fontSize: 14.sp,
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
                     if (_isExpanded)
                       GestureDetector(
                         onTap: () {
@@ -1839,19 +642,18 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
                             _isExpanded = false; // Masque la description complète
                           });
                         },
-                        child: const Text(
+                        child: Text(
                           'Read less',
-                          style: TextStyle(
-                            fontSize: 14,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14.sp,
                             color: Colors.blue,
                             decoration: TextDecoration.underline,
-                            fontFamily: 'LeagueSpartan-Light',
                           ),
                         ),
                       ),
                   ],
                 ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           // Prix total
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1859,27 +661,25 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'TOTAL',
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      fontFamily: 'LeagueSpartan-Bold',
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   GestureDetector(
                     onTap: () {
                       // Logique pour afficher les détails du prix (non implémentée ici)
                     },
-                    child: const Text(
+                    child: Text(
                       'Price details',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14.sp,
+                        color: const Color.fromARGB(255, 0, 0, 0),
                         decoration: TextDecoration.underline,
-                        fontFamily: 'LeagueSpartan-Light',
                       ),
                     ),
                   ),
@@ -1887,16 +687,15 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
               ),
               Text(
                 widget.estimatedTotal.replaceAll(' est. total', ''),
-                style: const TextStyle(
-                  fontSize: 18,
+                style: GoogleFonts.poppins(
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
-                  fontFamily: 'LeagueSpartan-Bold',
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
           // Bouton "Reserve" qui ouvre la pop-up
           SizedBox(
             width: double.infinity,
@@ -1906,17 +705,17 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF004852),
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(8.r),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Reserve',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.poppins(
+                  fontSize: 16.sp,
                   color: Colors.white,
-                  fontFamily: 'LeagueSpartan-Bold',
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -1926,31 +725,39 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
     );
   }
 
-  // Construit une ligne pour une caractéristique (icône + texte)
-  Widget _buildFeatureRow(IconData icon, String label, String value) {
+  // Construit une ligne pour une caractéristique (icône + label + valeur)
+  Widget _buildFeatureRow(String iconPath, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, size: 20, color: Colors.black54),
-          const SizedBox(width: 12),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
-              fontFamily: 'LeagueSpartan-SemiBold',
-            ),
+          Row(
+            children: [
+              Image.asset(
+                iconPath,
+                width: 20.w,
+                height: 20.h,
+                color: Colors.black,
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                label,
+                style: GoogleFonts.poppins(
+                  fontSize: 16.sp,
+                  color: const Color.fromARGB(255, 97, 97, 97),
+                ),
+              ),
+            ],
           ),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
-              fontFamily: 'LeagueSpartan-Light',
+          if (value.isNotEmpty) // Affiche la valeur uniquement si elle n'est pas vide
+            Text(
+              value,
+              style: GoogleFonts.poppins(
+                fontSize: 16.sp,
+                color: const Color.fromARGB(255, 0, 0, 0),
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -1960,8 +767,8 @@ class _ProductPageScreenState extends State<ProductPageScreen> {
   Widget _buildDivider() {
     return Divider(
       color: Colors.grey.shade300,
-      thickness: 1,
-      height: 1,
+      thickness: 1.h,
+      height: 1.h,
     );
   }
 }

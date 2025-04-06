@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Ajout de FlutterScreenUtil
+import 'package:google_fonts/google_fonts.dart'; // Ajout de GoogleFonts pour Poppins
 import 'package:vahanar_front/widgets/bottom_nav_bar.dart';
+import 'package:url_launcher/url_launcher.dart'; // Ajout de url_launcher pour les liens
 
 class HelpCenterScreen extends StatefulWidget {
-  const HelpCenterScreen({Key? key}) : super(key: key);
+  const HelpCenterScreen({super.key});
 
   @override
   _HelpCenterScreenState createState() => _HelpCenterScreenState();
@@ -11,6 +14,18 @@ class HelpCenterScreen extends StatefulWidget {
 class _HelpCenterScreenState extends State<HelpCenterScreen> {
   bool _showFAQ = true;
   int? _expandedIndex;
+
+  // Fonction pour lancer les URLs
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch $url')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +36,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           children: [
             // Header personnalisé
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               color: const Color(0xFF2A4D50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,20 +44,19 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
                         onPressed: () {
                           Navigator.pop(context);
                         },
                       ),
                     ],
                   ),
-                  const Text(
+                  Text(
                     'HELP CENTER',
-                    style: TextStyle(
-                      fontSize: 32,
+                    style: GoogleFonts.poppins( // Remplacement par Poppins
+                      fontSize: 32.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      fontFamily: 'LeagueSpartan-Bold',
                       decoration: TextDecoration.underline,
                       decorationColor: Colors.white,
                     ),
@@ -52,38 +66,46 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
             ),
             // Barre de recherche
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.search, color: Colors.grey),
+                    Image.asset(
+                      'assets/icons/sbl.png', // Remplacement de l'icône de recherche
+                      width: 24.w,
+                      height: 24.h,
+                    ),
                     Expanded(
                       child: TextField(
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Search by topic',
-                          hintStyle: TextStyle(
+                          hintStyle: GoogleFonts.poppins(
                             color: Colors.grey,
-                            fontFamily: 'LeagueSpartan-Light',
+                            fontSize: 16.sp,
                           ),
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
                         ),
                       ),
                     ),
-                    const Icon(Icons.arrow_forward, color: Colors.grey),
+                    Image.asset(
+                      'assets/icons/suiv.png', // Remplacement de l'icône de flèche
+                      width: 24.w,
+                      height: 24.h,
+                    ),
                   ],
                 ),
               ),
             ),
             // Boutons FAQ et Contact Us
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
                 children: [
                   Expanded(
@@ -96,23 +118,22 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _showFAQ ? const Color(0xFF2A4D50) : Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'FAQ',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          fontFamily: 'LeagueSpartan-Bold',
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16.w),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
@@ -123,18 +144,17 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: !_showFAQ ? const Color(0xFF2A4D50) : Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'CONTACT US',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          fontFamily: 'LeagueSpartan-Bold',
                         ),
                       ),
                     ),
@@ -142,7 +162,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16.0),
+            SizedBox(height: 16.h),
             // Contenu conditionnel : FAQ ou Contact Us
             Expanded(
               child: _showFAQ ? _buildFAQContent() : _buildContactUsContent(),
@@ -157,41 +177,40 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   // Contenu FAQ
   Widget _buildFAQContent() {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       itemCount: 4,
       itemBuilder: (context, index) {
-        return Container( // Utilisation de Container au lieu de Card pour le style
+        return Container(
           decoration: BoxDecoration(
-            color: Colors.grey[50], // Fond gris clair
-            borderRadius: BorderRadius.circular(25), // Bords arrondis
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(25.r),
             border: Border.all(
-              color: Colors.grey.shade300, // Bordure discrète
-              width: 1,
+              color: Colors.grey.shade300,
+              width: 1.w,
             ),
           ),
-          margin: const EdgeInsets.symmetric(vertical: 8.0), // Espacement entre les cases
+          margin: EdgeInsets.symmetric(vertical: 8.h),
           child: ExpansionTile(
             initiallyExpanded: index == _expandedIndex,
-            title: const Text(
+            title: Text(
               'Lorem ipsum dolor sit amet?',
-              style: TextStyle(
-                fontSize: 16,
+              style: GoogleFonts.poppins(
+                fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
-                fontFamily: 'LeagueSpartan-Bold',
               ),
             ),
             trailing: Icon(
               Icons.expand_more,
               color: const Color(0xFF2A4D50),
+              size: 24.w,
             ),
-            children: const [
+            children: [
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.w),
                 child: Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proesent pellentesque congue lorem, vel tincidunt tortor placerat a. Proin ac diam quam. Aenean in sagittis magna, ut feugiat diam.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'LeagueSpartan-Light',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14.sp,
                     color: Colors.black,
                   ),
                 ),
@@ -215,8 +234,8 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   // Contenu Contact Us
   Widget _buildContactUsContent() {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      itemCount: 5,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      itemCount: 5, // 5 éléments : LinkedIn, Website, X (Twitter), Facebook, Instagram
       itemBuilder: (context, index) {
         return _buildContactItem(index);
       },
@@ -227,38 +246,58 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   Widget _buildContactItem(int index) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey[50], // Fond gris clair
-        borderRadius: BorderRadius.circular(25), // Bords arrondis
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(25.r),
         border: Border.all(
-          color: Colors.grey.shade300, // Bordure discrète
-          width: 1,
+          color: Colors.grey.shade300,
+          width: 1.w,
         ),
       ),
-      margin: const EdgeInsets.symmetric(vertical: 8.0), // Espacement entre les cases
+      margin: EdgeInsets.symmetric(vertical: 8.h),
       child: ExpansionTile(
         initiallyExpanded: index == _expandedIndex,
         leading: Padding(
-          padding: const EdgeInsets.only(right: 8.0), //Espacement a droite de l'icone
+          padding: EdgeInsets.only(right: 8.w),
           child: Image.asset(
-            'assets/icons/${_getContactIconName(index)}.png', // Chemin de l'icône
-            width: 24, // Ajustez la taille selon vos besoins
-            height: 24,
-            color: const Color(0xFF2A4D50), // Ajout de la couleur verte foncée
+            'assets/icons/${_getContactIconName(index)}.png',
+            width: 24.w,
+            height: 24.h,
+            color: const Color(0xFF2A4D50),
           ),
         ),
         title: Text(
           _getContactTitle(index),
-          style: const TextStyle(
-            fontSize: 16,
-            fontFamily: 'LeagueSpartan-Light',
+          style: GoogleFonts.poppins(
+            fontSize: 16.sp,
             color: Colors.black,
           ),
         ),
         trailing: Icon(
           Icons.expand_more,
           color: const Color(0xFF2A4D50),
+          size: 24.w,
         ),
-        children: const [],
+        children: [
+          Padding(
+            padding: EdgeInsets.all(16.w),
+            child: GestureDetector(
+              onTap: () {
+                final url = _getContactUrl(index);
+                if (url.isNotEmpty) {
+                  _launchURL(url);
+                }
+              },
+              child: Text(
+                _getContactUrl(index).isNotEmpty ? 'Visit ${_getContactTitle(index)}' : 'Coming soon',
+                style: GoogleFonts.poppins(
+                  fontSize: 14.sp,
+                  color: _getContactUrl(index).isNotEmpty ? Colors.blue : Colors.grey,
+                  decoration: _getContactUrl(index).isNotEmpty ? TextDecoration.underline : null,
+                ),
+              ),
+            ),
+          ),
+        ],
         onExpansionChanged: (bool expanded) {
           setState(() {
             if (expanded) {
@@ -273,37 +312,53 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   }
 
   String _getContactIconName(int index) {
-    // Correspond aux noms des fichiers d'icônes dans votre dossier assets/icons
     switch (index) {
       case 0:
-        return 'eclipse1';
+        return 'eclipse1'; // LinkedIn
       case 1:
-        return 'eclipse2';
+        return 'eclipse2'; // Website
       case 2:
-        return 'eclipse3';
+        return 'eclipse3'; // X (Twitter)
       case 3:
-        return 'eclipse4';
+        return 'eclipse4'; // Facebook
       case 4:
-        return 'eclipse5';
+        return 'eclipse5'; // Instagram
       default:
-        return 'error'; // Icône par défaut
+        return 'error';
     }
   }
 
   String _getContactTitle(int index) {
     switch (index) {
       case 0:
-        return 'Customer Service';
+        return 'LinkedIn';
       case 1:
         return 'Website';
       case 2:
-        return 'Whatsapp';
+        return 'X (Twitter)';
       case 3:
         return 'Facebook';
       case 4:
         return 'Instagram';
       default:
         return 'Unknown';
+    }
+  }
+
+  String _getContactUrl(int index) {
+    switch (index) {
+      case 0:
+        return 'https://www.linkedin.com/company/vahanar/'; // LinkedIn
+      case 1:
+        return ''; // Website (vide pour l'instant)
+      case 2:
+        return 'https://x.com/Vahanar_'; // X (Twitter)
+      case 3:
+        return 'https://web.facebook.com/people/Vahanar/61574664671787/?rdid=Owm8mwpughqdkltf&share_url=https%3A%2F%2Fweb.facebook.com%2Fshare%2F1X6WbDTKUb%2F%3F_rdc%3D1%26_rdr'; // Facebook
+      case 4:
+        return 'https://www.instagram.com/vahanar_/'; // Instagram
+      default:
+        return '';
     }
   }
 }

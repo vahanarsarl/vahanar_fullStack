@@ -1,12 +1,14 @@
 class User {
-  final String id;
+  final int id;
   final String email;
   final String? firstName;
   final String? lastName;
   final String? phoneNumber;
-  final bool isPhoneVerified;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? profileImageUrl;
+  final bool isRegistrationComplete;
+  final bool hasDriverLicense;
+  final String? driverLicenseFront;
+  final String? driverLicenseBack;
 
   User({
     required this.id,
@@ -14,9 +16,11 @@ class User {
     this.firstName,
     this.lastName,
     this.phoneNumber,
-    required this.isPhoneVerified,
-    required this.createdAt,
-    required this.updatedAt,
+    this.profileImageUrl,
+    required this.isRegistrationComplete,
+    required this.hasDriverLicense,
+    this.driverLicenseFront,
+    this.driverLicenseBack,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -26,22 +30,11 @@ class User {
       firstName: json['firstName'],
       lastName: json['lastName'],
       phoneNumber: json['phoneNumber'],
-      isPhoneVerified: json['isPhoneVerified'] ?? false,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      profileImageUrl: json['profileImageUrl'],
+      isRegistrationComplete: json['isRegistrationComplete'] ?? false,
+      hasDriverLicense: json['hasDriverLicense'] ?? false,
+      driverLicenseFront: json['driverLicenseFront'],
+      driverLicenseBack: json['driverLicenseBack'],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
-      'phoneNumber': phoneNumber,
-      'isPhoneVerified': isPhoneVerified,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-    };
   }
 }

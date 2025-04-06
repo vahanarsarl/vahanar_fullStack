@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vahanar_front/screens/auth/splash_screen.dart';
+import 'package:vahanar_front/screens/auth/greeting_screen.dart';
 import 'package:vahanar_front/screens/auth/sign_up/sign_up_step1.dart';
 import 'package:vahanar_front/screens/auth/sign_up/sign_up_step2.dart';
 import 'package:vahanar_front/screens/auth/sign_up/create_password.dart';
@@ -14,14 +16,38 @@ import 'package:vahanar_front/screens/profile/profile_screen.dart';
 import 'package:vahanar_front/screens/help_center/help_center_screen.dart';
 import 'package:vahanar_front/screens/profile/reservations_history_screen.dart';
 
+// Placeholders pour les pages manquantes (comme dans main.dart)
+class DrivingLicenceScreen extends StatelessWidget {
+  const DrivingLicenceScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text('Driving Licence Screen')),
+    );
+  }
+}
+
+class GeneralConditionsScreen extends StatelessWidget {
+  const GeneralConditionsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text('General Conditions Screen')),
+    );
+  }
+}
+
 class AppRouter {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        //TODO: check user logedin and redirect to home if true or greeting screen otherwaise
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
-      case '/sign_up':
-        return MaterialPageRoute(builder: (_) => const SignUpStep1Screen());
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
+      case '/splash_screen':
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
+      case '/greeting':
+        return MaterialPageRoute(builder: (_) => const GreetingScreen());
       case '/sign_up/step1':
         return MaterialPageRoute(builder: (_) => const SignUpStep1Screen());
       case '/sign_up/step2':
@@ -41,18 +67,37 @@ class AppRouter {
       case '/search':
         return MaterialPageRoute(builder: (_) => const SearchScreen());
       case '/search/result':
-        // You might want to pass arguments to the SearchResultScreen
-        return MaterialPageRoute(builder: (_) => const SearchResultScreen(pickupLocation: 'Default Location', pickupDate: 'Mar 22', dropoffDate: 'Mar 24'));
+        // Récupérer les arguments passés à la route
+        final args = settings.arguments as Map<String, String>?;
+        return MaterialPageRoute(
+          builder: (_) => SearchResultScreen(
+            pickupLocation: args?['pickupLocation'] ?? 'Default Location',
+            pickupDate: args?['pickupDate'] ?? 'Mar 22',
+            dropoffDate: args?['dropoffDate'] ?? 'Mar 24',
+          ),
+        );
       case '/search/filter':
-        return MaterialPageRoute(builder: (_) => const FilterScreen(initialSortBy: 'Featured', initialVehicleType: 'SUV', initialFeature: 'Automatic transmission', initialSeats: '4', initialDriverAge: '24'));
+        final args = settings.arguments as Map<String, String>?;
+        return MaterialPageRoute(
+          builder: (_) => FilterScreen(
+            initialSortBy: args?['sortBy'] ?? 'Featured',
+            initialVehicleType: args?['vehicleType'] ?? 'SUV',
+            initialFeature: args?['feature'] ?? 'Automatic transmission',
+            initialSeats: args?['seats'] ?? '4',
+            initialDriverAge: args?['driverAge'] ?? '24',
+          ),
+        );
       case '/profile':
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case '/driving_licence':
+        return MaterialPageRoute(builder: (_) => const DrivingLicenceScreen());
       case '/help_center':
         return MaterialPageRoute(builder: (_) => const HelpCenterScreen());
       case '/my_reservations':
         return MaterialPageRoute(builder: (_) => const ReservationsHistoryScreen());
+      case '/general_conditions':
+        return MaterialPageRoute(builder: (_) => const GeneralConditionsScreen());
       default:
-        // If there is no such route, return the error route
         return _errorRoute();
     }
   }

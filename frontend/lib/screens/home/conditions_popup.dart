@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // Pour l'effet de flou
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Ajout de FlutterScreenUtil
+import 'package:google_fonts/google_fonts.dart'; // Ajout de GoogleFonts pour Poppins
 import 'booking_confirmation_screen.dart'; // Import the second popup
 
 class ConditionsPopup extends StatefulWidget {
@@ -55,24 +57,24 @@ class _ConditionsPopupState extends State<ConditionsPopup> with SingleTickerProv
       filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
       child: Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.only(top: 50),
+        insetPadding: EdgeInsets.only(top: 50.h),
         child: SlideTransition(
           position: _slideAnimation,
           child: Container(
             width: MediaQuery.of(context).size.width * 0.9,
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF004852), Color(0xFF007A6F)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
+                  blurRadius: 15.r,
+                  offset: Offset(0, 5.h),
                 ),
               ],
             ),
@@ -81,27 +83,26 @@ class _ConditionsPopupState extends State<ConditionsPopup> with SingleTickerProv
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Title with a modern look
-                const Text(
+                Text(
                   'Conditions de réservation',
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: GoogleFonts.poppins( // Remplacement par Poppins
+                    fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontFamily: 'LeagueSpartan-Bold',
                     shadows: [
                       Shadow(
                         color: Colors.black26,
-                        offset: Offset(2, 2),
-                        blurRadius: 4,
+                        offset: Offset(2.w, 2.h),
+                        blurRadius: 4.r,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 // List of conditions with checkboxes
                 ..._conditionsState.keys.map((condition) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
                     child: Row(
                       children: [
                         Checkbox(
@@ -113,23 +114,22 @@ class _ConditionsPopupState extends State<ConditionsPopup> with SingleTickerProv
                           },
                           activeColor: Colors.white,
                           checkColor: const Color(0xFF004852),
-                          side: const BorderSide(color: Colors.white, width: 2),
+                          side: BorderSide(color: Colors.white, width: 2.w),
                         ),
                         Expanded(
                           child: Text(
                             condition,
-                            style: const TextStyle(
-                              fontSize: 16,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16.sp,
                               color: Colors.white,
-                              fontFamily: 'LeagueSpartan-Light',
                             ),
                           ),
                         ),
                       ],
                     ),
                   );
-                }).toList(),
-                const SizedBox(height: 20),
+                }),
+                SizedBox(height: 20.h),
                 // Button to proceed to the next popup
                 SizedBox(
                   width: double.infinity,
@@ -146,19 +146,18 @@ class _ConditionsPopupState extends State<ConditionsPopup> with SingleTickerProv
                         : null, // Disable button if not all conditions are checked
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
                       elevation: 5,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Suivant',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF004852),
+                      style: GoogleFonts.poppins(
+                        fontSize: 16.sp,
+                        color: const Color(0xFF004852),
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'LeagueSpartan-Bold',
                       ),
                     ),
                   ),

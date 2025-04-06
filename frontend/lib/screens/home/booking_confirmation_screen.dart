@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Ajout de FlutterScreenUtil
+import 'package:google_fonts/google_fonts.dart'; // Ajout de GoogleFonts pour Poppins
 
 class BookingConfirmationScreen extends StatefulWidget {
   const BookingConfirmationScreen({super.key});
@@ -45,18 +47,18 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> w
           scale: _scaleAnimation,
           child: Container(
             width: MediaQuery.of(context).size.width * 0.8,
-            constraints: const BoxConstraints(
-              minHeight: 300, // Increased height for the popup
+            constraints: BoxConstraints(
+              minHeight: 300.h, // Utilisation de FlutterScreenUtil
             ),
-            padding: const EdgeInsets.all(30), // Increased padding for more space
+            padding: EdgeInsets.all(30.w), // Utilisation de FlutterScreenUtil
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
+                  blurRadius: 10.r,
+                  offset: Offset(0, 5.h),
                 ),
               ],
             ),
@@ -65,8 +67,8 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> w
               children: [
                 // Checkmark icon
                 Container(
-                  width: 80, // Increased size to match the image
-                  height: 80,
+                  width: 80.w,
+                  height: 80.h,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Color(0xFFD3E0E2), // Gray background color from the image
@@ -74,48 +76,44 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> w
                   child: Center(
                     child: Image.asset(
                       'assets/icons/valide.png',
-                      width: 40, // Adjusted size of the checkmark inside the circle
-                      height: 40,
-                      // Removed the color property to preserve the original image colors
+                      width: 40.w,
+                      height: 40.h,
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 // Confirmation message
-                const Text(
+                Text(
                   'Reserved successfully',
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: GoogleFonts.poppins( // Remplacement par Poppins
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF004852), // Dark teal color
-                    fontFamily: 'LeagueSpartan-Bold',
+                    color: const Color(0xFF004852),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 // Description - First part
-                const Text(
+                Text(
                   'Your reservation is approved, we will contact you in less than 30 minutes.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey, // Gray color for the description
-                    fontFamily: 'LeagueSpartan-Light',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14.sp,
+                    color: Colors.grey,
                   ),
                 ),
-                const SizedBox(height: 4), // Small spacing between the two parts
+                SizedBox(height: 4.h),
                 // Description - Underlined part in sky-blue
-                const Text(
+                Text(
                   'Please stay tuned to our call',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF87CEEB), // Sky-blue color
-                    fontFamily: 'LeagueSpartan-Light',
-                    decoration: TextDecoration.underline, // Underline the text
-                    decorationColor: Color(0xFF87CEEB), // Underline color matches the text
+                  style: GoogleFonts.poppins(
+                    fontSize: 14.sp,
+                    color: const Color(0xFF87CEEB),
+                    decoration: TextDecoration.underline,
+                    decorationColor: const Color(0xFF87CEEB),
                   ),
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30.h),
                 // Let's go button
                 SizedBox(
                   width: double.infinity,
@@ -125,19 +123,18 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> w
                       // Add navigation to the next screen if needed
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF004852), // Teal button color
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color(0xFF004852),
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Let’s go',
-                      style: TextStyle(
-                        fontSize: 16,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16.sp,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'LeagueSpartan-Bold',
                       ),
                     ),
                   ),

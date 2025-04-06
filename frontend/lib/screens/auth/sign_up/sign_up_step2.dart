@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Ajout de flutter_screenutil
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:vahanar_front/widgets/app_bar.dart';
 import 'package:vahanar_front/widgets/custom_button.dart';
-import 'package:vahanar_front/constants.dart'; // Importation des constants
+import 'package:vahanar_front/constants.dart';
 
 class VerifyPhoneScreen extends StatefulWidget {
   const VerifyPhoneScreen({super.key});
@@ -15,104 +16,127 @@ class _VerifyPhoneScreenState extends State<VerifyPhoneScreen> {
   final TextEditingController _otpController = TextEditingController();
 
   @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleVerify() async {
+    print('Verifying OTP and navigating to /sign_up/finish');
+    Navigator.pushNamed(context, '/sign_up/finish');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: "Verify Phone",
-        backgroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              "Verify your phone number",
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'LeagueSpartan',
-                color: AppConstants.textColor,
-              ),
-            ),
-            const SizedBox(height: 10),
-            RichText(
-              text: const TextSpan(
-                text: "We've sent an SMS with an activation code to your phone ",
-                style: TextStyle(color: Colors.black54, fontSize: 16, fontFamily: 'LeagueSpartan'),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextSpan(
-                    text: "+212 6 14 74 61 98",
-                    style: TextStyle(
-                      color: AppConstants.primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'LeagueSpartan',
-                    ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: AppConstants.textColor, size: 24.w),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  SizedBox(width: 16.w),
                 ],
               ),
-            ),
-            const SizedBox(height: 30),
-            PinCodeTextField(
-              appContext: context,
-              length: 5,
-              controller: _otpController,
-              keyboardType: TextInputType.number,
-              pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(8),
-                fieldHeight: 50,
-                fieldWidth: 45,
-                activeFillColor: Colors.white,
-                inactiveFillColor: Colors.grey.shade200,
-                selectedFillColor: Colors.white,
-                activeColor: AppConstants.primaryColor,
-                inactiveColor: Colors.grey.shade400,
-                selectedColor: AppConstants.primaryColor,
+              SizedBox(height: 20.h),
+              Text(
+                "Verify your phone number",
+                style: GoogleFonts.poppins(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppConstants.textColor,
+                ),
               ),
-              cursorColor: AppConstants.primaryColor,
-              onChanged: (value) {},
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: RichText(
-                text: const TextSpan(
-                  text: "I didn’t receive a code ",
-                  style: TextStyle(color: Colors.black45, fontFamily: 'LeagueSpartan'),
+              SizedBox(height: 10.h),
+              RichText(
+                text: TextSpan(
+                  text: "We've sent an SMS with an activation code to your phone ",
+                  style: GoogleFonts.poppins(
+                    color: Colors.black54,
+                    fontSize: 16.sp,
+                  ),
                   children: [
                     TextSpan(
-                      text: "Resend",
-                      style: TextStyle(
+                      text: "+212 *  ** ** **",
+                      style: GoogleFonts.poppins(
                         color: AppConstants.primaryColor,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'LeagueSpartan',
+                        fontSize: 16.sp,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            const Spacer(),
-            CustomButton(
-              text: "Verify",
-              onPressed: () {
-                if (_otpController.text.length == 5) {
-                  Navigator.pushNamed(context, '/sign_up/finish'); // Redirection vers FinishSignUpScreen
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please enter a valid OTP"),
+              SizedBox(height: 40.h),
+              Center(
+                child: PinCodeTextField(
+                  appContext: context,
+                  length: 5,
+                  controller: _otpController,
+                  keyboardType: TextInputType.number,
+                  pinTheme: PinTheme(
+                    shape: PinCodeFieldShape.box,
+                    borderRadius: BorderRadius.circular(8.r),
+                    fieldHeight: 50.h,
+                    fieldWidth: 45.w,
+                    activeFillColor: Colors.white,
+                    inactiveFillColor: Colors.grey.shade200,
+                    selectedFillColor: Colors.white,
+                    activeColor: AppConstants.primaryColor,
+                    inactiveColor: Colors.grey.shade400,
+                    selectedColor: AppConstants.primaryColor,
+                  ),
+                  cursorColor: AppConstants.primaryColor,
+                  onChanged: (value) {},
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Center(
+                child: RichText(
+                  text: TextSpan(
+                    text: "I didn’t receive a code ",
+                    style: GoogleFonts.poppins(
+                      color: Colors.black45,
+                      fontSize: 14.sp,
                     ),
-                  );
-                }
-              },
-              color: AppConstants.primaryColor,
-              width: double.infinity,
-              height: 50, isLoading: null,
-            ),
-            const SizedBox(height: 20),
-          ],
+                    children: [
+                      TextSpan(
+                        text: "Resend",
+                        style: GoogleFonts.poppins(
+                          color: AppConstants.primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Spacer(),
+              CustomButton(
+                text: "Verify",
+                onPressed: () => _handleVerify(),
+                color: AppConstants.primaryColor,
+                width: double.infinity,
+                height: 50.h,
+                textStyle: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.sp,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(height: 20.h),
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart'; // Ajout de GoogleFonts pour Poppins
 import 'package:vahanar_front/animations/button_animations.dart';
-import 'package:vahanar_front/constants.dart'; // Import des constantes
-import 'package:vahanar_front/theme.dart'; // Import du thème
 
 class FilterScreen extends StatefulWidget {
   final String initialSortBy;
@@ -72,43 +72,45 @@ class _FilterScreenState extends State<FilterScreen> {
           children: [
             // En-tête
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    icon: Icon(Icons.arrow_back, color: Colors.black, size: 24.w),
                     onPressed: () {
                       Navigator.pop(context); // Retour à SearchResultScreen
                     },
                   ),
                   Text(
                     'FILTRE',
-                    style: AppTheme.lightTheme.textTheme.headlineLarge?.copyWith(
+                    style: GoogleFonts.poppins(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
+                      fontSize: 24.sp,
                     ),
                   ),
-                  const SizedBox(width: 48), // Espace pour équilibrer avec l'icône
+                  SizedBox(width: 48.w), // Espace pour équilibrer avec l'icône
                 ],
               ),
             ),
             // Contenu principal
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Section "Sort By"
                     Text(
                       'Sort By',
-                      style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+                      style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -117,36 +119,37 @@ class _FilterScreenState extends State<FilterScreen> {
                             selectedSortBy = value;
                           });
                         }),
-                        const SizedBox(width: 8),
-                        _buildFilterButton('Lowest price', selectedSortBy, (value) {
+                        SizedBox(width: 8.w),
+                        _buildFilterButton('Lowest ', selectedSortBy, (value) {
                           setState(() {
                             selectedSortBy = value;
                           });
                         }),
-                        const SizedBox(width: 8),
-                        _buildFilterButton('Highest price', selectedSortBy, (value) {
+                        SizedBox(width: 7.w),
+                        _buildFilterButton('Highest ', selectedSortBy, (value) {
                           setState(() {
                             selectedSortBy = value;
                           });
                         }),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     // Section "Vehicle type" avec défilement horizontal
                     Text(
                       'Vehicle type',
-                      style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+                      style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: vehicleTypes.map((type) {
                           return Padding(
-                            padding: const EdgeInsets.only(right: 8),
+                            padding: EdgeInsets.only(right: 8.w),
                             child: _buildFilterButton(type, selectedVehicleType, (value) {
                               setState(() {
                                 selectedVehicleType = value;
@@ -156,22 +159,23 @@ class _FilterScreenState extends State<FilterScreen> {
                         }).toList(),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     // Section "Features" avec défilement horizontal
                     Text(
                       'Features',
-                      style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+                      style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: features.map((feature) {
                           return Padding(
-                            padding: const EdgeInsets.only(right: 8),
+                            padding: EdgeInsets.only(right: 8.w),
                             child: _buildFilterButton(
                               feature['label'],
                               selectedFeature,
@@ -186,16 +190,17 @@ class _FilterScreenState extends State<FilterScreen> {
                         }).toList(),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     // Section "Minimum number of seats"
                     Text(
                       'Minimum number of seats',
-                      style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+                      style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -204,13 +209,13 @@ class _FilterScreenState extends State<FilterScreen> {
                             selectedSeats = value;
                           });
                         }),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         _buildFilterButton('5', selectedSeats, (value) {
                           setState(() {
                             selectedSeats = value;
                           });
                         }),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8.w),
                         _buildFilterButton('9', selectedSeats, (value) {
                           setState(() {
                             selectedSeats = value;
@@ -218,19 +223,20 @@ class _FilterScreenState extends State<FilterScreen> {
                         }),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     // Section "Minimum Age of primary driver"
                     Text(
                       'Minimum Age of primary driver',
-                      style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+                      style: GoogleFonts.poppins(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                      spacing: 8.w,
+                      runSpacing: 8.h,
                       children: [
                         _buildFilterButton('21', selectedDriverAge, (value) {
                           setState(() {
@@ -259,7 +265,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         }),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h),
                     // Bouton "Show offers"
                     Center(
                       child: ElevatedButton(
@@ -275,16 +281,17 @@ class _FilterScreenState extends State<FilterScreen> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF004852),
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                          padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
                         ),
                         child: Text(
-                          'Show offers', // Le nombre de résultats sera calculé dans SearchResultScreen
-                          style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+                          'Show offers',
+                          style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
+                            fontSize: 16.sp,
                           ),
                         ),
                       ),
@@ -305,10 +312,10 @@ class _FilterScreenState extends State<FilterScreen> {
       isSelected: isSelected,
       onTap: () => onTap(label),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isSelected ? Colors.black : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.r),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -316,16 +323,17 @@ class _FilterScreenState extends State<FilterScreen> {
             if (icon != null) ...[
               Icon(
                 icon,
-                size: 16,
+                size: 16.w,
                 color: isSelected ? Colors.white : Colors.black,
               ),
-              const SizedBox(width: 4),
+              SizedBox(width: 4.w),
             ],
             Text(
               label,
-              style: AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
+              style: GoogleFonts.poppins(
                 color: isSelected ? Colors.white : Colors.black,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 14.sp,
               ),
             ),
           ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:vahanar_front/screens/home/home_screen.dart';
 import 'package:vahanar_front/screens/home/search_screen.dart';
 import 'package:vahanar_front/screens/profile/profile_screen.dart';
+
 class BottomNavBar extends StatefulWidget {
   final int selectedIndex; // Paramètre pour l'index actif
 
@@ -49,108 +51,51 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 10),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            spreadRadius: 2,
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        items: [
-          _buildNavItem('search', 'Search', 0),
-          _buildNavItem('home', 'Home', 1),
-          _buildNavItem('person', 'Profile', 2),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        selectedFontSize: 14,
-        unselectedFontSize: 14,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: const Color(0xFF9DB2CE),
-      ),
+    return CurvedNavigationBar(
+      backgroundColor: Colors.transparent,
+      color: const Color(0xFF004852),
+      buttonBackgroundColor: const Color(0xFF004852),
+      height: 60,
+      animationDuration: const Duration(milliseconds: 300),
+      index: _selectedIndex,
+      onTap: _onItemTapped,
+      items: [
+        _buildNavItem('search', 0),
+        _buildNavItem('home', 1),
+        _buildNavItem('person', 2),
+      ],
     );
   }
 
-  BottomNavigationBarItem _buildNavItem(String iconName, String label, int index) {
+  Widget _buildNavItem(String iconName, int index) {
     bool isSelected = _selectedIndex == index;
 
-    return BottomNavigationBarItem(
-      icon: Column(
+    return Container(
+      padding: const EdgeInsets.all(8),
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Transform.translate(
-            offset: const Offset(0, -30), // Augmenter l'offset pour que le cercle monte davantage
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Cercle blanc (toujours présent, plus grand pour l'icône active)
-                Container(
-                  width: isSelected ? 70 : 50, // Augmenter la taille du cercle blanc pour l'icône active
-                  height: isSelected ? 70 : 50,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                ),
-                // Cercle bleu (uniquement pour l'icône active)
-                if (isSelected)
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF004852), // Couleur du bouton actif
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                  ),
-                // Icône
-                Image.asset(
-                  isSelected
-                      ? 'assets/icons/${iconName}_b.png' // Icône blanche si actif
-                      : 'assets/icons/${iconName}.png', // Icône normale sinon
-                  width: 30,
-                  height: 30,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8), // Augmenter l'espace entre l'icône et la ligne
-          // Ligne de terminaison en bas
-          Container(
-            width: 20,
-            height: 1, // Réduire la hauteur pour une ligne plus fine
+          Image.asset(
+            isSelected
+                ? 'assets/icons/${iconName}_b.png' // Icône blanche si actif
+                : 'assets/icons/$iconName.png', // Icône normale sinon
+            width: 24,
+            height: 24,
             color: isSelected ? Colors.white : const Color(0xFF9DB2CE),
           ),
+          const SizedBox(height: 2),
+          // Petit indicateur pour l'élément sélectionné
+          if (isSelected)
+            Container(
+              width: 5,
+              height: 5,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
         ],
       ),
-      label: label,
     );
   }
 }
