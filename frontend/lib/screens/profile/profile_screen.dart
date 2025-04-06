@@ -1,178 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart'; // Ajout de GoogleFonts pour Poppins
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vahanar_front/providers/auth_provider.dart';
+import 'package:vahanar_front/services/user_service.dart';
 import 'package:vahanar_front/widgets/bottom_nav_bar.dart';
-import 'edit_profile_screen.dart';
-import 'driver_license_camera_screen.dart';
-
-class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    final user = authProvider.user;
-    final fullName = user != null ? '${user.firstName} ${user.lastName}' : 'John Doe';
-    final profileImageUrl = user?.profileImageUrl;
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h), // Utilisation de FlutterScreenUtil
-      color: const Color(0xFF2A4D50),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              Text(
-                'Profile',
-                style: GoogleFonts.poppins( // Remplacement par Poppins
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(width: 48.w),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 100.w,
-                height: 100.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.r),
-                  image: DecorationImage(
-                    image: profileImageUrl != null
-                        ? NetworkImage(profileImageUrl)
-                        : const AssetImage('assets/images/profile_picture.png') as ImageProvider,
-                    fit: BoxFit.cover,
-                    onError: (exception, stackTrace) => const AssetImage('assets/images/profile_picture.png'),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      fullName,
-                      style: GoogleFonts.poppins(
-                        fontSize: 28.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.edit,
-                            color: Colors.grey,
-                            size: 18.w,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            'Edit Profile',
-                            style: GoogleFonts.poppins(
-                              fontSize: 18.sp,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ProfileFooter extends StatelessWidget {
-  const ProfileFooter({super.key});
-
-  Future<void> _launchURL(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (!await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 4.h,
-          color: const Color(0xFF2A4D50),
-        ),
-        SizedBox(height: 16.h),
-        Text(
-          'Get to know more about US :',
-          style: GoogleFonts.poppins(
-            fontSize: 16.sp,
-            color: const Color(0xFF2A4D50),
-          ),
-        ),
-        SizedBox(height: 8.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: Image.asset(
-                'assets/icons/facebook.png',
-                width: 30.w,
-                height: 30.h,
-              ),
-              onPressed: () {
-                _launchURL('https://web.facebook.com/people/Vahanar/61574664671787/');
-              },
-            ),
-            SizedBox(width: 16.w),
-            IconButton(
-              icon: Image.asset(
-                'assets/icons/insta.png',
-                width: 30.w,
-                height: 30.h,
-              ),
-              onPressed: () {
-                _launchURL('https://www.instagram.com/vahanar_/');
-              },
-            ),
-          ],
-        ),
-        SizedBox(height: 16.h),
-      ],
-    );
-  }
-}
+import 'package:vahanar_front/screens/profile/edit_profile_screen.dart';
+import 'package:vahanar_front/screens/profile/driver_license_camera_screen.dart';
+import 'package:url_launcher/url_launcher.dart'; // Ajout pour launchUrl
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -189,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
-                  const ProfileHeader(),
+                  _buildHeader(context),
                   if (!hasDriverLicense) ...[
                     Container(
                       color: Colors.yellow,
@@ -275,6 +110,105 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildHeader(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.user;
+    final fullName = user != null ? '${user.firstName} ${user.lastName}' : 'John Doe';
+    final profileImageUrl = user?.profileImageUrl; // Récupérer l'URL de l'image depuis l'utilisateur
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
+      color: const Color(0xFF2A4D50),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.w),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              Text(
+                'Profile',
+                style: GoogleFonts.poppins(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(width: 48.w),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 100.w,
+                height: 100.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.r),
+                  image: DecorationImage(
+                    image: profileImageUrl != null && profileImageUrl.isNotEmpty
+                        ? NetworkImage(profileImageUrl)
+                        : const AssetImage('assets/images/profile_picture.png') as ImageProvider,
+                    fit: BoxFit.cover,
+                    onError: (exception, stackTrace) => const AssetImage('assets/images/profile_picture.png'),
+                  ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      fullName,
+                      style: GoogleFonts.poppins(
+                        fontSize: 28.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EditProfileScreen()),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.edit,
+                            color: Colors.grey,
+                            size: 18.w,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            'Edit Profile',
+                            style: GoogleFonts.poppins(
+                              fontSize: 18.sp,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildOptionTile({
     required IconData icon,
     required String title,
@@ -284,6 +218,68 @@ class ProfileScreen extends StatelessWidget {
       icon: icon,
       title: title,
       onTap: onTap,
+    );
+  }
+}
+
+class ProfileFooter extends StatelessWidget {
+  const ProfileFooter({super.key});
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 4.h,
+          color: const Color(0xFF2A4D50),
+        ),
+        SizedBox(height: 16.h),
+        Text(
+          'Get to know more about US :',
+          style: GoogleFonts.poppins(
+            fontSize: 16.sp,
+            color: const Color(0xFF2A4D50),
+          ),
+        ),
+        SizedBox(height: 8.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Image.asset(
+                'assets/icons/facebook.png',
+                width: 30.w,
+                height: 30.h,
+              ),
+              onPressed: () {
+                _launchURL('https://web.facebook.com/people/Vahanar/61574664671787/');
+              },
+            ),
+            SizedBox(width: 16.w),
+            IconButton(
+              icon: Image.asset(
+                'assets/icons/insta.png',
+                width: 30.w,
+                height: 30.h,
+              ),
+              onPressed: () {
+                _launchURL('https://www.instagram.com/vahanar_/');
+              },
+            ),
+          ],
+        ),
+        SizedBox(height: 16.h),
+      ],
     );
   }
 }

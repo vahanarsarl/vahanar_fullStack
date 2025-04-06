@@ -1,6 +1,12 @@
 import { prisma } from '../lib/db/prisma';
 
 export class UserService {
+  // Fetch all users
+  static async getAll() {
+    return prisma.user.findMany(); // Adjust the model name if it's not `user`
+  }
+
+  // Fetch a user by ID
   static async getById(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -14,6 +20,7 @@ export class UserService {
     return userWithoutPassword;
   }
 
+  // Update a user
   static async update(userId: string, data: {
     firstName?: string;
     lastName?: string;
